@@ -625,8 +625,26 @@ export function ScreenB() {
                 <HBars items={borderBars.slice(0, 8)} />
               </div>
               <div className="glass-card">
-                <p className="glass-kicker">边民互市</p>
-                <p className="viz-lead">{borderSide.mutual}</p>
+                <p className="glass-kicker">边民互市 · 资料全文</p>
+                <h3>贸易新业态综合服务</h3>
+                <div className="info-sections">
+                  {borderSide.mutualSections.map((sec) => (
+                    <div key={sec.title} className="info-section">
+                      <b>{sec.title}</b>
+                      <ul>
+                        {sec.items.map((line) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="glass-card">
+                <p className="glass-kicker">信贷数据</p>
+                <h3>边境信贷（示意）</h3>
+                <p className="viz-note">以下为占位模拟，正式数据请客户自行填写替换。</p>
+                <MetricTiles items={borderSide.creditPlaceholders} />
               </div>
             </>
           )}
