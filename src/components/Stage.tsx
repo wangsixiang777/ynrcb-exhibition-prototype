@@ -1,19 +1,14 @@
 import type { ReactNode } from 'react'
 
 type Props = {
-  title: string
-  hint?: string
+  tone?: 'paper' | 'viz'
   children: ReactNode
 }
 
-/** 预览固定按 1920×1080 铺满，不再缩放超大画布 */
-export function Stage({ title, hint, children }: Props) {
+/** 菜单以下只留一块 16:9 内容，不再加说明条。 */
+export function Stage({ tone = 'paper', children }: Props) {
   return (
-    <section className="screen">
-      <header className="screen-head">
-        <h1>{title}</h1>
-        {hint ? <p>{hint}</p> : null}
-      </header>
+    <section className={tone === 'viz' ? 'screen screen-viz' : 'screen'}>
       <div className="screen-body">{children}</div>
     </section>
   )

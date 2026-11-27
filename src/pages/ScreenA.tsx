@@ -1,31 +1,28 @@
 import { useState } from 'react'
 import { Stage } from '../components/Stage'
-import { depositPanels, realAssets, screenMeta } from '../data/content'
+import { depositPanels, realAssets } from '../data/content'
 
 type Tab = 'deposit' | 'wealth' | 'third'
 
-function RateCard({ title, rows, tip }: { title: string; rows: { term: string; rate: string }[]; tip: string }) {
+function RatePanel({ title, rows, tip, scaleMax }: { title: string; rows: { term: string; rate: string }[]; tip: string; scaleMax: number }) {
+  const max = scaleMax
   return (
-    <div className="glass rate-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-        <h3 className="title-cn">{title}</h3>
-        <span className="chip warn">PPT示意</span>
-      </div>
-      <table className="data-table">
-        <thead>
-          <tr><th>期限</th><th>年利率</th></tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={`${r.term}-${r.rate}`}>
-              <td>{r.term}</td>
-              <td className="num">{r.rate}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div style={{ marginTop: 6, fontSize: 11, color: 'var(--muted-2)' }}>{tip}</div>
-    </div>
+    <section className="viz-panel">
+      <header>
+        <h3>{title}</h3>
+        <span>PPT示意</span>
+      </header>
+      <ul>
+        {rows.map((r, i) => (
+          <li key={`${title}-${i}`}>
+            <span>{r.term}</span>
+            <i><b style={{ width: `${(Number.parseFloat(r.rate) / max) * 100}%` }} /></i>
+            <strong>{r.rate}</strong>
+          </li>
+        ))}
+      </ul>
+      <p>{tip}</p>
+    </section>
   )
 }
 
@@ -33,44 +30,43 @@ export function ScreenA() {
   const [tab, setTab] = useState<Tab>('deposit')
   const left = depositPanels.slice(0, 2)
   const right = depositPanels.slice(2)
+  const scaleMax = Math.max(...depositPanels.flatMap((p) => p.rows.map((r) => Number.parseFloat(r.rate) || 0)), 0.01)
 
   return (
-    <Stage title={screenMeta.A.title} hint="预览 1920×1080 · 利率为需求PPT版式数字，资料包没有正式挂牌利率表">
-      <div className="board board-a">
-        <div className="a-head">
-          <div>
-            <h2 className="title-cn">{tab === 'deposit' ? '存款利率' : tab === 'wealth' ? '自营理财' : '版面三'}</h2>
-            <p>行内数据展示</p>
+    <Stage tone="viz">
+      <div className="board viz viz-a">
+        <header className="viz-title">
+          <span>云南省农村商业银行</span>
+          <h2>{tab === 'deposit' ? '存款利率' : tab === 'wealth' ? '自营理财' : '版面三'}</h2>
+        </header>
+        <div className="viz-a-grid">
+          <div className="viz-col">
+            {tab === 'deposit' ? left.map((p) => <RatePanel key={p.title} {...p} scaleMax={scaleMax} />) : (
+              <section className="viz-panel viz-empty">
+                <h3>{tab === 'wealth' ? '自营理财清单' : '版面三'}</h3>
+                <p>{tab === 'wealth' ? '资料包没有产品表，这里不编造产品名称和业绩。' : '主题和字段尚未确认。'}</p>
+              </section>
+            )}
           </div>
-        </div>
-        <div className="a-grid">
-          <div className="a-col">
-            {tab === 'wealth' ? (
-              <div className="glass rate-card">
-                <span className="chip warn">资料未提供</span>
-                <h3 className="title-cn" style={{ marginTop: 8 }}>自营理财清单</h3>
-                <p style={{ color: 'var(--muted)', fontSize: 13 }}>资料包没有产品表，这里不编造产品名称和业绩。</p>
-              </div>
-            ) : tab === 'third' ? (
-              <div className="glass rate-card">
-                <span className="chip warn">待确认</span>
-                <h3 className="title-cn" style={{ marginTop: 8 }}>主题未定</h3>
-                <p style={{ color: 'var(--muted)', fontSize: 13 }}>请确认版面三的内容主题与字段。</p>
-              </div>
-            ) : left.map((p) => <RateCard key={p.title} {...p} />)}
-          </div>
-          <div className="media">
+          <figure className="viz-hero">
             {tab === 'deposit' ? (
-              <img className="photo-fill" src={`${import.meta.env.BASE_URL}${realAssets.branches.dali}`} alt="大理市农商行营业部" />
-            ) : tab === 'wealth' ? '自营理财 · 待补产品表' : '版面三 · 主题待定'}
-          </div>
-          <div className="a-col">
-            {tab === 'deposit' ? right.map((p) => <RateCard key={p.title} {...p} />) : (
-              <div className="glass rate-card"><h3 className="title-cn">字段待资料</h3></div>
+              <img src={`${import.meta.env.BASE_URL}${realAssets.branches.dali}`} alt="大理市农商行营业部" />
+            ) : (
+              <div className="viz-hold">{tab === 'wealth' ? '待补产品表' : '主题待定'}</div>
+            )}
+            <figcaption>{tab === 'deposit' ? '大理市农商行营业部 · 资料包实拍' : '核对位'}</figcaption>
+          </figure>
+          <div className="viz-col">
+            {tab === 'deposit' ? right.map((p) => <RatePanel key={p.title} {...p} scaleMax={scaleMax} />) : (
+              <section className="viz-panel viz-empty">
+                <h3>待补字段</h3>
+                <p>正式数据到位后再排这一侧。</p>
+              </section>
             )}
           </div>
         </div>
-        <div>
+        <div className="viz-foot">
+          <p>利率取自需求 PPT 版式，不是正式挂牌。自营理财无清单。版面三主题待确认。</p>
           <div className="seg">
             <button type="button" className={tab === 'deposit' ? 'is-active' : undefined} onClick={() => setTab('deposit')}>存款利率</button>
             <button type="button" className={tab === 'wealth' ? 'is-active' : undefined} onClick={() => setTab('wealth')}>自营理财</button>

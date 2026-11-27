@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Stage } from '../components/Stage'
-import { eScreens, screenMeta } from '../data/content'
+import { eScreens } from '../data/content'
 
 const zones = ['全部', '公众教育区', '客户体验与互动区', '理财销售专区低柜屏'] as const
 
@@ -11,7 +11,7 @@ export function ScreenD() {
   const current = eScreens.find((e) => e.id === id) ?? list[0]
 
   return (
-    <Stage title={screenMeta.D.title} hint="预览 1920×1080 · 原表第 4 条已拆为 E04-1 至 E04-5">
+    <Stage>
       <div className="board board-d">
         <aside className="glass d-list">
           <h2 className="title-cn">公示目录</h2>

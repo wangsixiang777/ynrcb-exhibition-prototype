@@ -9,7 +9,6 @@ import {
   overseas,
   povertyCase,
   revitalization,
-  screenMeta,
   specialtyBranches,
 } from '../data/content'
 
@@ -73,8 +72,8 @@ export function ScreenB() {
   ].filter(Boolean).join(' · ')
 
   return (
-    <Stage title={screenMeta.B.title} hint="预览 1920×1080 · 实物屏 3584×2048 · 沙盘为示意图">
-      <div className="board board-b">
+    <Stage tone="viz">
+      <div className="board board-b viz">
         <div className="b-head">
           <div>
             <h2 className="title-cn">金融服务展示</h2>

@@ -3,10 +3,10 @@ import { useState } from 'react'
 import { confirms } from '../data/content'
 
 const links = [
-  { to: '/', label: '总览', end: true },
   { to: '/screen-a', label: '行内数据' },
   { to: '/screen-b', label: '互动大屏' },
-  { to: '/screen-c', label: '点位 / 笑脸墙' },
+  { to: '/screen-c', label: '三大点位' },
+  { to: '/screen-smile', label: '笑脸墙' },
   { to: '/screen-d', label: '电子屏公示' },
 ]
 
@@ -25,7 +25,7 @@ export function Layout() {
         </div>
         <nav className="top-nav">
           {links.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.end} className={({ isActive }) => (isActive ? 'active' : undefined)}>
+            <NavLink key={l.to} to={l.to} className={({ isActive }) => (isActive ? 'active' : undefined)}>
               {l.label}
             </NavLink>
           ))}
