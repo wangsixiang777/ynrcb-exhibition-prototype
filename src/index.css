@@ -482,43 +482,64 @@ img { max-width: 100%; display: block; }
   overflow: visible;
   pointer-events: none;
 }
-.rad-arc,
+.rad-arc-group {
+  opacity: 0;
+  animation: radArcIn 0.5s ease forwards;
+}
 .rad-arc-base {
   fill: none;
-  stroke: rgba(232, 93, 28, 0.28);
-  stroke-width: 0.18;
+  stroke: rgba(232, 93, 28, 0.2);
+  stroke-width: 0.1;
   stroke-linecap: round;
 }
-.flow-bead {
-  fill: rgba(255, 196, 96, 0.75);
-  filter: drop-shadow(0 0 0.35px rgba(255, 180, 60, 0.9));
+.rad-arc-flow {
+  fill: none;
+  stroke-linecap: round;
+  animation: flowSweep 2.6s linear infinite;
 }
-.flow-bead.head {
-  fill: #fff6d8;
-  filter: drop-shadow(0 0 1.2px rgba(255, 230, 140, 1));
+.rad-arc-flow.tail {
+  stroke: rgba(255, 190, 90, 0.35);
+  stroke-width: 0.14;
+  stroke-dasharray: 0.16 0.84;
+}
+.rad-arc-flow.head {
+  stroke: #fff4c8;
+  stroke-width: 0.11;
+  stroke-dasharray: 0.045 0.955;
+  filter: drop-shadow(0 0 0.6px rgba(255, 230, 150, 0.95));
 }
 .ripple-ring {
   position: absolute;
-  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
   border-radius: 50%;
-  border: 2px solid rgba(232, 93, 28, 0.45);
-  box-shadow: 0 0 0 1px rgba(255, 200, 120, 0.2), inset 0 0 18px rgba(255, 180, 80, 0.12);
+  border: 1.5px solid rgba(232, 93, 28, 0.5);
+  box-shadow: 0 0 12px rgba(255, 180, 80, 0.18);
   pointer-events: none;
-  opacity: 0.75;
-  transition: width 40ms linear, height 40ms linear, opacity 0.2s ease;
+  transform: translate(-50%, -50%);
+  animation: rippleExpand 0.9s ease-out forwards;
 }
+.sand-dots { position: absolute; inset: 0; pointer-events: none; }
 .sand-stage .map-pin { pointer-events: auto; }
 .sand-stage .county-pin { pointer-events: none; }
 .sand-dot {
   position: absolute;
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #e85d1c;
-  box-shadow: 0 0 0 4px rgba(232, 93, 28, 0.22), 0 0 10px rgba(232, 93, 28, 0.55);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  box-shadow: 0 0 0 3px rgba(232, 93, 28, 0.2), 0 0 8px rgba(232, 93, 28, 0.45);
+  transform: translate(-50%, -50%) scale(0.4);
+  opacity: 0;
+  will-change: transform, opacity, left, top;
 }
+.sand-dot.is-reveal {
+  animation: sandReveal 0.4s ease forwards;
+}
+.sand-dot.is-reform {
+  animation: sandReform 1.6s ease-in forwards;
+}
+.sand-dot.hub.is-reveal { animation-duration: 0.25s; }
 .sand-dot.hub {
   width: 14px;
   height: 14px;
@@ -534,6 +555,7 @@ img { max-width: 100%; display: block; }
 .sand-dot.soft {
   background: #f08a3a;
   opacity: 0.7;
+  transform: translate(-50%, -50%) scale(1);
 }
 .sand-dot.hot {
   background: #ff4d2e;
@@ -757,8 +779,10 @@ img { max-width: 100%; display: block; }
 .glass-card h3 {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: 16px;
-  color: #9a3412;
+  font-size: 17px;
+  font-weight: 700;
+  color: #6b1408;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 .glass-hero .glass-kpi-row {
   display: grid;
@@ -769,18 +793,18 @@ img { max-width: 100%; display: block; }
 .glass-kpi-row > div {
   padding: 10px 8px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
 }
-.glass-kpi-row span { display: block; font-size: 11px; color: #8a5a30; }
-.glass-kpi-row strong { display: block; margin-top: 4px; font-size: 26px; line-height: 1; color: #d35400; }
-.glass-kpi-row em { font-style: normal; margin-left: 3px; font-size: 12px; color: #a56a30; }
+.glass-kpi-row span { display: block; font-size: 11px; color: #6b3a14; font-weight: 650; }
+.glass-kpi-row strong { display: block; margin-top: 4px; font-size: 26px; line-height: 1; color: #b32600; }
+.glass-kpi-row em { font-style: normal; margin-left: 3px; font-size: 12px; color: #8a4a18; }
 .glass-kicker {
   margin: 0 0 8px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.06em;
-  color: #c45a12;
-  font-weight: 650;
+  color: #8a2208;
+  font-weight: 700;
 }
 .glass-btns, .level-btns {
   display: grid;
@@ -821,6 +845,12 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 10px 26px rgba(140, 80, 20, 0.14);
   backdrop-filter: blur(8px);
 }
+.sand-bleed .viz-lead { color: #4a240c; }
+.sand-bleed .viz-note { color: #6b3a14; }
+.sand-bleed .viz-miss { color: #8a2808; }
+.sand-bleed .viz-chip b { color: #8a2208; }
+.sand-bleed .viz-tile span { color: #6b3a14; }
+.sand-bleed .viz-tile strong { color: #b32600; }
 .viz-card h3 {
   margin: 0 0 8px;
   font-family: var(--font-display);
@@ -1169,6 +1199,29 @@ img { max-width: 100%; display: block; }
   22% { opacity: 1; }
   48% { opacity: 0; transform: rotate(-28deg) translateX(160px); }
   100% { opacity: 0; transform: rotate(-28deg) translateX(160px); }
+}
+@keyframes flowSweep {
+  to { stroke-dashoffset: -1; }
+}
+@keyframes radArcIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rippleExpand {
+  0% { width: 0; height: 0; opacity: 0.75; }
+  100% { width: 84%; height: 68%; opacity: 0; }
+}
+@keyframes sandReveal {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.35); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes sandReform {
+  to {
+    left: var(--hx, 56.5%);
+    top: var(--hy, 47.5%);
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
 }
 .bleed .stat { background: rgba(255, 248, 230, 0.9); border: 1px solid rgba(212, 160, 70, 0.4); box-shadow: none; }
 .bleed .stat span { color: #8a5a30; }

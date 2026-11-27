@@ -109,18 +109,7 @@ function quadPath(from: { left: number; top: number }, to: RadDot) {
   return `M ${from.left} ${from.top} Q ${midX} ${midY} ${to.left} ${to.top}`
 }
 
-/** 二次贝塞尔上取点，供流光尾巴采样 */
-function quadPoint(from: { left: number; top: number }, to: RadDot, t: number) {
-  const mx = (from.left + to.left) / 2
-  const my = (from.top + to.top) / 2 - to.lift
-  const u = 1 - t
-  return {
-    left: u * u * from.left + 2 * u * t * mx + t * t * to.left,
-    top: u * u * from.top + 2 * u * t * my + t * t * to.top,
-  }
-}
-
-const cosmosStars = Array.from({ length: 120 }, (_, i) => ({
+const cosmosStars = Array.from({ length: 72 }, (_, i) => ({
   left: ((i * 53) % 100) + (i % 9) * 0.15,
   top: ((i * 37) % 100) + (i % 6) * 0.2,
   size: 1.2 + (i % 5) * 0.7,
@@ -147,11 +136,6 @@ export function ScreenB() {
   const [borderPlayKey, setBorderPlayKey] = useState(0)
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
-  const [reformT, setReformT] = useState(0)
-  /** 涟漪半径（舞台百分比） */
-  const [rippleR, setRippleR] = useState(40)
-  /** 流光相位 0–1 */
-  const [flowPhase, setFlowPhase] = useState(0)
   const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
   /** 宇宙星空 → 云南沙盘 */
   const [cosmosPhase, setCosmosPhase] = useState<'intro' | 'zoom' | 'done'>('intro')
@@ -180,21 +164,7 @@ export function ScreenB() {
     }
   }, [cosmosKey])
 
-  /** 中心支行抛物线流光持续扫动 */
-  useEffect(() => {
-    if (mod !== 'network' || cosmosPhase !== 'done' || level < 1 || reforming) return
-    let raf = 0
-    let start = performance.now()
-    const tick = (now: number) => {
-      const t = ((now - start) % 2800) / 2800
-      setFlowPhase(t)
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [mod, cosmosPhase, level, reforming])
-
-  /** 进入边境县 / 重播：沙盘自动跑马灯，依次高亮 25 县并在点位旁累计弹窗 */
+  /** 进入边境县 / 重播：沙盘自动跑马灯，依次高亮 25 县 */
   useEffect(() => {
     if (mod !== 'border') {
       setPlaying(false)
@@ -235,37 +205,17 @@ export function ScreenB() {
     return () => window.clearInterval(timer)
   }, [autoLevel, mod])
 
-  /** 层级切换：涟漪半径从 0 向外扩，点位依次显现 */
-  useEffect(() => {
-    if (mod !== 'network' || reforming || cosmosPhase !== 'done') return
-    setRippleR(0)
-    let t = 0
-    const timer = window.setInterval(() => {
-      t += 1
-      setRippleR(Math.min(42, (t / 20) * 42))
-      if (t >= 20) window.clearInterval(timer)
-    }, 40)
-    return () => window.clearInterval(timer)
-  }, [level, mod, reforming, cosmosPhase])
-
+  /** 改制收束：纯 CSS 动画，结束后弹窗 */
   useEffect(() => {
     if (!reforming || mod !== 'network') return
-    setReformT(0)
-    setRippleR(42)
-    let t = 0
-    const timer = window.setInterval(() => {
-      t += 1
-      setReformT(t)
-      if (t >= 18) {
-        window.clearInterval(timer)
-        setReforming(false)
-        setModal({
-          title: '农商行改制',
-          body: '全省网点星光收束至昆明总行后弹出。改制介绍正文待提供。',
-        })
-      }
-    }, 110)
-    return () => window.clearInterval(timer)
+    const timer = window.setTimeout(() => {
+      setReforming(false)
+      setModal({
+        title: '农商行改制',
+        body: '全省网点星光收束至昆明总行后弹出。改制介绍正文待提供。',
+      })
+    }, 1800)
+    return () => window.clearTimeout(timer)
   }, [reforming, mod])
 
   const levelBars = useMemo(
@@ -360,71 +310,60 @@ export function ScreenB() {
         <div className="sand-stage">
           {mod === 'network' && cosmosPhase === 'done' && (
             <>
-              {level >= 1 && !reforming && rippleR > 0.2 && (
+              {level >= 1 && !reforming && (
                 <div
+                  key={`rip-${level}`}
                   className="ripple-ring"
-                  style={{
-                    left: `${HQ.left}%`,
-                    top: `${HQ.top}%`,
-                    width: `${rippleR * 2}%`,
-                    height: `${rippleR * 1.6}%`,
-                  }}
+                  style={{ left: `${HQ.left}%`, top: `${HQ.top}%` }}
                 />
               )}
               {level >= 1 && !reforming && (
                 <svg className="rad-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                  {radiationDots.filter((d) => d.centerBranch && d.dist <= rippleR + 1.2).map((d, i) => {
+                  <defs>
+                    <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="rgba(255,230,160,0)" />
+                      <stop offset="55%" stopColor="rgba(255,200,100,0.55)" />
+                      <stop offset="100%" stopColor="#fff6d0" />
+                    </linearGradient>
+                  </defs>
+                  {radiationDots.filter((d) => d.centerBranch).map((d, i) => {
                     const dPath = quadPath(HQ, d)
-                    const headT = (flowPhase + i * 0.09) % 1
-                    const tail: { left: number; top: number; o: number; s: number }[] = []
-                    for (let k = 0; k < 16; k += 1) {
-                      const tt = headT - k * 0.028
-                      if (tt < 0) break
-                      const p = quadPoint(HQ, d, tt)
-                      const fade = 1 - k / 16
-                      tail.push({
-                        left: p.left,
-                        top: p.top,
-                        o: fade * fade,
-                        s: k === 0 ? 0.72 : 0.55 * fade,
-                      })
-                    }
+                    const delay = `${(d.dist / 42) * 0.55 + i * 0.05}s`
                     return (
-                      <g key={i}>
-                        <path className="rad-arc-base" d={dPath} />
-                        {tail.map((p, k) => (
-                          <circle
-                            key={k}
-                            className={k === 0 ? 'flow-bead head' : 'flow-bead'}
-                            cx={p.left}
-                            cy={p.top}
-                            r={p.s}
-                            style={{ opacity: p.o }}
-                          />
-                        ))}
+                      <g key={i} className="rad-arc-group" style={{ animationDelay: delay }}>
+                        <path className="rad-arc-base" d={dPath} pathLength={1} />
+                        <path
+                          className="rad-arc-flow tail"
+                          d={dPath}
+                          pathLength={1}
+                          style={{ animationDelay: `${i * 0.11}s` }}
+                        />
+                        <path
+                          className="rad-arc-flow head"
+                          d={dPath}
+                          pathLength={1}
+                          style={{ animationDelay: `${i * 0.11}s` }}
+                        />
                       </g>
                     )
                   })}
                 </svg>
               )}
-              {radiationDots.map((d, i) => {
-                const converge = reforming ? reformT / 18 : 0
-                const shown = reforming || d.hub || d.dist <= rippleR + 0.8
-                const left = d.left + (HQ.left - d.left) * converge
-                const top = d.top + (HQ.top - d.top) * converge
-                return (
+              <div key={`dots-${level}`} className="sand-dots">
+                {radiationDots.map((d, i) => (
                   <span
                     key={i}
-                    className={d.star ? 'sand-dot star' : d.hub ? 'sand-dot hub' : 'sand-dot'}
+                    className={`${d.star ? 'sand-dot star' : d.hub ? 'sand-dot hub' : 'sand-dot'}${reforming ? ' is-reform' : ' is-reveal'}`}
                     style={{
-                      left: `${left}%`,
-                      top: `${top}%`,
-                      opacity: shown ? (reforming ? 0.3 + (1 - converge) * 0.7 : 1) : 0,
-                      transform: `translate(-50%, -50%) scale(${shown ? 1 : 0.35})`,
+                      left: `${d.left}%`,
+                      top: `${d.top}%`,
+                      ['--hx' as string]: `${HQ.left}%`,
+                      ['--hy' as string]: `${HQ.top}%`,
+                      animationDelay: reforming ? `${(1 - d.dist / 45) * 0.5}s` : `${d.dist * 0.038}s`,
                     }}
                   />
-                )
-              })}
+                ))}
+              </div>
             </>
           )}
 
@@ -519,17 +458,24 @@ export function ScreenB() {
           )}
 
           {mod === 'specialty' && (
-            <div className="glass-card">
-              <p className="glass-kicker">板块二 · 网点介绍</p>
-              <span className="chip">{branch.tag}</span>
-              <h3>{branch.name}</h3>
-              <p className="viz-lead">{branch.text}</p>
-              <div className="viz-chips compact">
-                {branch.facts.slice(0, 4).map((f) => (
-                  <div key={f.k} className="viz-chip"><b>{f.k}</b><span>{f.v}</span></div>
-                ))}
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">板块二 · 网点介绍</p>
+                <span className="chip">{branch.tag}</span>
+                <h3>{branch.name}</h3>
+                <p className="viz-lead">{branch.text}</p>
+                <div className="viz-chips compact">
+                  {branch.facts.slice(0, 4).map((f) => (
+                    <div key={f.k} className="viz-chip"><b>{f.k}</b><span>{f.v}</span></div>
+                  ))}
+                </div>
               </div>
-            </div>
+              <div className="glass-card spec-media">
+                <p className="glass-kicker">网点照片</p>
+                <img src={`${base}${branch.photo}`} alt={branch.name} />
+                {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
+              </div>
+            </>
           )}
 
           {mod === 'border' && (
@@ -667,24 +613,18 @@ export function ScreenB() {
           )}
 
           {mod === 'specialty' && (
-            <>
-              <div className="glass-card spec-media">
-                <p className="glass-kicker">右侧图片</p>
-                <img src={`${base}${branch.photo}`} alt={branch.name} />
-                {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
+            <div className="glass-card">
+              <p className="glass-kicker">二级按钮</p>
+              <h3>特色网点切换</h3>
+              <div className="spec-switches">
+                {specialtyBranches.map((b) => (
+                  <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
+                    <b>{b.short}</b>
+                    <em>{b.tag}</em>
+                  </button>
+                ))}
               </div>
-              <div className="glass-card">
-                <p className="glass-kicker">五个二级按键</p>
-                <div className="spec-switches">
-                  {specialtyBranches.map((b) => (
-                    <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
-                      <b>{b.short}</b>
-                      <em>{b.tag}</em>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
+            </div>
           )}
 
           {mod === 'border' && (
