@@ -877,6 +877,32 @@ img { max-width: 100%; display: block; }
   font-weight: 700;
   color: #5a1208;
 }
+.help-pin {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: #c4161c;
+  box-shadow: 0 0 0 3px rgba(196, 22, 28, 0.28), 0 0 8px rgba(196, 22, 28, 0.45);
+  z-index: 2;
+}
+.help-pin.provincial {
+  background: #e8943a;
+  box-shadow: 0 0 0 3px rgba(232, 148, 58, 0.3), 0 0 8px rgba(232, 148, 58, 0.45);
+}
+.help-pin em {
+  position: absolute;
+  left: 10px;
+  top: -6px;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 650;
+  color: #5a1208;
+  white-space: nowrap;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 4px #fff;
+  pointer-events: none;
+}
 .rev-facts {
   display: grid;
   gap: 6px;

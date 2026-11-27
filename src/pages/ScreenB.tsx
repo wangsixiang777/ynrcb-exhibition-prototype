@@ -6,6 +6,7 @@ import {
   povertyPhoto,
   borderSide,
   happyVillage,
+  helpCounties,
   networkStats,
   overseas,
   povertyCase,
@@ -409,8 +410,15 @@ export function ScreenB() {
             </>
           )}
 
-          {mod === 'revitalize' && radiationDots.slice(0, revType === 'national' ? 20 : 28).map((d, i) => (
-            <span key={i} className="sand-dot soft" style={{ left: `${d.left}%`, top: `${d.top}%` }} />
+          {mod === 'revitalize' && helpCounties.filter((c) => c.level === revType).map((c) => (
+            <span
+              key={c.name}
+              className={`help-pin${c.level === 'provincial' ? ' provincial' : ''}`}
+              style={{ left: `${c.left}%`, top: `${c.top}%` }}
+              title={`${c.name} ${c.n}个网点`}
+            >
+              <em>{c.name}</em>
+            </span>
           ))}
 
           {mod === 'overseas' && (
@@ -524,12 +532,12 @@ export function ScreenB() {
               <h3>帮扶层级</h3>
               <div className="level-btns">
                 <button type="button" className={revType === 'national' ? 'is-on' : undefined} onClick={() => setRevType('national')}>
-                  <span>国家级帮扶县</span>
-                  <strong className="num">{revitalization.national.counties}</strong>
+                  <span>国家级网点</span>
+                  <strong className="num">{revitalization.national.branches}</strong>
                 </button>
                 <button type="button" className={revType === 'provincial' ? 'is-on' : undefined} onClick={() => setRevType('provincial')}>
-                  <span>省级帮扶县</span>
-                  <strong className="num">{revitalization.provincial.counties}</strong>
+                  <span>省级网点</span>
+                  <strong className="num">{revitalization.provincial.branches}</strong>
                 </button>
               </div>
             </div>
@@ -642,40 +650,29 @@ export function ScreenB() {
           {mod === 'revitalize' && (
             <>
               <div className="glass-card glass-hero">
-                <p className="glass-kicker">板块五 · 当前层级</p>
-                <h3>{revType === 'national' ? '国家级帮扶县' : '省级帮扶县'}</h3>
+                <p className="glass-kicker">板块五 · 当前网点</p>
+                <h3>{revType === 'national' ? '国家级乡村振兴帮扶县' : '省级乡村振兴帮扶县'}</h3>
                 <div className="glass-kpi-row">
-                  <div>
-                    <span>县数</span>
-                    <strong className="num">{revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}</strong>
-                  </div>
                   <div>
                     <span>网点</span>
                     <strong className="num">{revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}</strong>
                   </div>
+                  <div>
+                    <span>区县</span>
+                    <strong className="num">{revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}</strong>
+                  </div>
                 </div>
+              </div>
+              <div className="glass-card">
+                <h3>帮扶数据</h3>
                 <div className="rev-facts">
-                  {(revType === 'national' ? revitalization.national.facts : revitalization.provincial.facts).map((item) => (
+                  {revitalization.facts.map((item) => (
                     <div key={item.label} className="rev-fact">
                       <span>{item.label}</span>
                       <strong className="num">{item.value}</strong>
                       <em>{item.note}</em>
                     </div>
                   ))}
-                </div>
-              </div>
-              <div className="glass-card">
-                <h3>国家 / 省级对比</h3>
-                <div className="rev-table">
-                  <span />
-                  <b className={revType === 'national' ? 'is-on' : undefined}>国家级</b>
-                  <b className={revType === 'provincial' ? 'is-on' : undefined}>省级</b>
-                  <span>县数</span>
-                  <strong className={revType === 'national' ? 'is-on' : undefined}>{revitalization.national.counties}</strong>
-                  <strong className={revType === 'provincial' ? 'is-on' : undefined}>{revitalization.provincial.counties}</strong>
-                  <span>网点</span>
-                  <strong className={revType === 'national' ? 'is-on' : undefined}>{revitalization.national.branches}</strong>
-                  <strong className={revType === 'provincial' ? 'is-on' : undefined}>{revitalization.provincial.branches}</strong>
                 </div>
               </div>
             </>
