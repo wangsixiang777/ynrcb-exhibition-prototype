@@ -216,7 +216,7 @@ export function ScreenB() {
       <div className={`bleed sand-bleed is-bright${cosmosOn ? ' cosmos-on' : ''}`}>
         <img
           className={`bleed-bg${cosmosPhase === 'intro' ? ' is-far' : ''}${cosmosPhase === 'zoom' ? ' is-arrive' : ''}`}
-          src={`${base}maps/yunnan-sandtable-bright.jpg`}
+          src={`${base}maps/yunnan-map-official.jpg`}
           alt=""
         />
         <div className="bleed-wash sand-wash-bright" />

@@ -458,7 +458,11 @@ img { max-width: 100%; display: block; }
   font-weight: 650;
   color: #9a3412;
 }
-.sand-bleed .bleed-bg { object-fit: cover; object-position: 52% 42%; }
+.sand-bleed .bleed-bg {
+  object-fit: contain;
+  object-position: center 42%;
+  background: #f3e6c8;
+}
 .sand-wash-bright {
   background:
     linear-gradient(90deg, rgba(255, 244, 220, 0.55) 0%, rgba(255, 244, 220, 0.12) 18%, transparent 30%, transparent 70%, rgba(255, 244, 220, 0.12) 82%, rgba(255, 244, 220, 0.55) 100%),
