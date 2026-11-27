@@ -14,6 +14,25 @@ import {
 
 type Module = 'network' | 'specialty' | 'border' | 'happy' | 'revitalize' | 'overseas'
 
+const rail: { id: Module; label: string; value: string }[] = [
+  { id: 'network', label: '营业网点', value: '2100' },
+  { id: 'network', label: '自助银行', value: '2604' },
+  { id: 'network', label: '覆盖乡镇', value: '1962' },
+  { id: 'network', label: '服务站', value: '1.3万+' },
+  { id: 'network', label: '支付点', value: '1.15万+' },
+  { id: 'border', label: '边境县', value: '25' },
+  { id: 'border', label: '边境网点', value: '约368' },
+  { id: 'border', label: '跨境结算', value: '638亿+' },
+  { id: 'happy', label: '幸福村网点', value: '126' },
+  { id: 'happy', label: '贷款余额', value: '264.42亿' },
+  { id: 'revitalize', label: '国家帮扶县', value: '27 / 487' },
+  { id: 'revitalize', label: '帮扶贷款', value: '1200亿+' },
+  { id: 'revitalize', label: '省级帮扶县', value: '39 / 534' },
+  { id: 'revitalize', label: '建档农户', value: '941万' },
+  { id: 'overseas', label: '境外同业', value: '越6老1缅1' },
+  { id: 'specialty', label: '特色网点', value: '5处' },
+]
+
 const modules: { id: Module; label: string }[] = [
   { id: 'network', label: '网点分布' },
   { id: 'specialty', label: '特色网点' },
@@ -65,17 +84,11 @@ export function ScreenB() {
     return () => window.clearInterval(timer)
   }, [playing, mod])
 
-  const subtitle = [
-    modules.find((m) => m.id === mod)?.label,
-    mod === 'network' ? `当前层级 ${networkStats.levels[level].name}` : '',
-    mod === 'border' && borderCounties[borderIdx] ? borderCounties[borderIdx].name : '',
-  ].filter(Boolean).join(' · ')
-
   const base = import.meta.env.BASE_URL
 
   return (
     <Stage tone="viz">
-      <div className="bleed">
+      <div className="bleed has-rail">
         <img className="bleed-bg" src={`${base}hall/exhibition-hall.jpg`} alt="" />
         <div className="bleed-wash is-soft" />
         <div className="stage-well">
@@ -90,6 +103,19 @@ export function ScreenB() {
               <span>缅甸</span>
             </div>
           )}
+          {mod === 'specialty' && specialtyBranches.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              className={branchId === b.id ? 'map-pin on' : 'map-pin'}
+              style={{ left: b.pin.left, top: b.pin.top }}
+              onClick={() => setBranchId(b.id)}
+            >
+              <i />
+              <span>{b.short}</span>
+              <em>{b.tag}</em>
+            </button>
+          ))}
         </div>
 
         <aside className="bleed-side bleed-left">
@@ -103,11 +129,14 @@ export function ScreenB() {
             </>
           )}
           {mod === 'specialty' && (
-            <div className="gold-card">
+            <div className="gold-card spec-card">
               <span className="chip">{branch.tag}</span>
               <h3>{branch.name}</h3>
-              <p>{branch.text}</p>
-              {branch.id === 'dulong' ? <p>{povertyCase.title}：{povertyCase.paras[1]}</p> : null}
+              <ul className="fact-list">
+                {branch.facts.map((f) => (
+                  <li key={f.k}><b>{f.k}</b><span>{f.v}</span></li>
+                ))}
+              </ul>
             </div>
           )}
           {mod === 'border' && (
@@ -167,17 +196,18 @@ export function ScreenB() {
             </div>
           )}
           {mod === 'specialty' && (
-            <div className="gold-card">
-              <h3>右侧实拍</h3>
-              <img className="photo-fill" style={{ height: 168, marginTop: 8 }} src={`${base}${branch.photo}`} alt={branch.name} />
-              {branch.id === 'dulong' ? (
-                <img className="photo-fill" style={{ height: 110, marginTop: 8 }} src={`${base}${povertyPhoto}`} alt="独龙江减贫案例" />
-              ) : null}
-              {specialtyBranches.map((b) => (
-                <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} style={{ width: '100%', marginTop: 6, justifyContent: 'flex-start' }} onClick={() => setBranchId(b.id)}>
-                  {b.name}
-                </button>
-              ))}
+            <div className="gold-card spec-photo">
+              <h3>{branch.name}</h3>
+              <img src={`${base}${branch.photo}`} alt={branch.name} />
+              {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
+              <div className="spec-switches">
+                {specialtyBranches.map((b) => (
+                  <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
+                    <b>{b.short}</b>
+                    <em>{b.tag}</em>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
           {mod === 'border' && (
@@ -221,6 +251,20 @@ export function ScreenB() {
           </div>
         )}
 
+        <div className="metric-rail">
+          {rail.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              className={mod === item.id ? 'is-on' : undefined}
+              onClick={() => { setMod(item.id); setModal(null); setPlaying(false) }}
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </button>
+          ))}
+        </div>
+
         <div className="bleed-tabs">
           {modules.map((m) => (
             <button key={m.id} type="button" className={mod === m.id ? 'is-on' : undefined} onClick={() => { setMod(m.id); setModal(null); setPlaying(false) }}>
@@ -228,8 +272,6 @@ export function ScreenB() {
             </button>
           ))}
         </div>
-        <p className="bleed-caption">{subtitle}{mod === 'specialty' ? ' · 资料包实拍' : ' · 沙盘为示意图'}</p>
-
         {modal && (
           <div className="modal-mask" onClick={() => setModal(null)}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
