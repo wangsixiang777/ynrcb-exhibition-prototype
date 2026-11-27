@@ -14,83 +14,93 @@ export function ScreenD() {
   const current = eScreens.find((e) => e.id === id) ?? list[0]
 
   return (
-    <Stage width={2880} height={1620} label={screenMeta.D.title} note={screenMeta.D.note}>
-      <div className="hud-screen" style={{ padding: 40, display: 'grid', gridTemplateColumns: '760px 1fr', gap: 20 }}>
-        <div className="panel" style={{ padding: 18, overflow: 'auto' }}>
-          <div className="hud-title" style={{ fontSize: 28, marginBottom: 12 }}>电子屏目录</div>
-          <div className="logic-note" style={{ marginBottom: 14 }}>
-            原表序号问题：第4条企业公示重复、漏个人版；附件文件夹内「附件9-x」为历史编号，对应本表 E04
-            组，不是第9条。
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+    <Stage
+      width={2880}
+      height={1620}
+      title={screenMeta.D.title}
+      sizeLabel={screenMeta.D.size}
+      hint="左侧目录，右侧详情。原表第4条已拆为 E04-1～5；附件「9-x」为历史编号。"
+    >
+      <div className="hud" style={{ padding: 36, display: 'grid', gridTemplateColumns: '720px 1fr', gap: 20 }}>
+        <aside className="glass" style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto auto 1fr', gap: 14, minHeight: 0 }}>
+          <div className="title-cn" style={{ fontSize: 28 }}>公示目录</div>
+          <div className="seg" style={{ flexWrap: 'wrap', borderRadius: 16 }}>
             {zones.map((z) => (
-              <button key={z} type="button" className={zone === z ? 'gold-btn' : 'ghost-btn'} onClick={() => setZone(z)}>
-                {z}
+              <button key={z} type="button" className={zone === z ? 'is-active' : undefined} onClick={() => setZone(z)}>
+                {z === '理财销售专区低柜屏' ? '理财低柜' : z.replace('与互动区', '')}
               </button>
             ))}
           </div>
-          <div style={{ display: 'grid', gap: 8 }}>
+          <div style={{ overflow: 'auto', display: 'grid', gap: 8, alignContent: 'start' }}>
             {list.map((e) => (
               <button
                 key={e.id}
                 type="button"
                 onClick={() => setId(e.id)}
-                className={current.id === e.id ? 'gold-btn' : 'ghost-btn'}
-                style={{ textAlign: 'left', display: 'grid', gap: 4 }}
+                className={current.id === e.id ? 'btn-primary' : 'btn-ghost'}
+                style={{
+                  height: 'auto',
+                  minHeight: 56,
+                  justifyContent: 'flex-start',
+                  textAlign: 'left',
+                  padding: '12px 14px',
+                  display: 'grid',
+                  gap: 4,
+                }}
               >
-                <span>
+                <span style={{ fontWeight: 700 }}>
                   {e.id} · {e.title}
-                  {'blocked' in e && e.blocked ? ' ⚠' : ''}
+                  {'blocked' in e && e.blocked ? ' · 缺素材' : ''}
                 </span>
-                <span style={{ fontSize: 12, opacity: 0.8 }}>{e.zone}</span>
+                <span style={{ fontSize: 12, opacity: 0.75 }}>{e.zone}</span>
               </button>
             ))}
           </div>
-        </div>
+        </aside>
 
-        <div className="panel panel-strong" style={{ padding: 36, position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+        <section className="glass-strong" style={{ padding: 32, display: 'grid', gridTemplateRows: 'auto 1fr auto', gap: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
             <div>
-              <div className="tag">{current.id}</div>
-              {'blocked' in current && current.blocked ? <span className="tag danger" style={{ marginLeft: 8 }}>阻塞</span> : null}
-              <h2 style={{ fontSize: 42, color: 'var(--gold-100)', margin: '12px 0' }}>{current.title}</h2>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span className="chip">{current.id}</span>
+                {'blocked' in current && current.blocked ? <span className="chip danger">阻塞</span> : null}
+              </div>
+              <h2 className="title-cn" style={{ fontSize: 40, margin: '12px 0 0' }}>{current.title}</h2>
             </div>
-            <div style={{ textAlign: 'right', color: 'var(--text-dim)', fontSize: 18 }}>
-              <div>部门：{current.dept}</div>
-              <div>区域：{current.zone}</div>
-              <div>依据：{current.basis}</div>
+            <div style={{ textAlign: 'right', fontSize: 16, color: 'var(--muted)', lineHeight: 1.7 }}>
+              <div>{current.dept}</div>
+              <div>{current.zone}</div>
+              <div>{current.basis}</div>
             </div>
           </div>
 
           <div
             style={{
-              marginTop: 20,
               padding: 28,
-              minHeight: 680,
               borderRadius: 16,
               border: '1px solid var(--line)',
               background: 'rgba(255,248,232,0.04)',
-              fontSize: 28,
-              lineHeight: 1.75,
+              fontSize: 26,
+              lineHeight: 1.8,
               color: 'var(--cream)',
             }}
           >
             {current.body}
           </div>
 
-          <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div className="panel" style={{ padding: 16 }}>
-              <div style={{ color: 'var(--gold-100)' }}>素材 / 附件</div>
-              <div style={{ marginTop: 8, fontSize: 20, color: 'var(--text-dim)' }}>{current.asset}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="glass" style={{ padding: 16 }}>
+              <div style={{ color: 'var(--gold)', fontSize: 14 }}>素材</div>
+              <div style={{ marginTop: 8, fontSize: 18, color: 'var(--muted)' }}>{current.asset}</div>
             </div>
-            <div className="panel" style={{ padding: 16 }}>
-              <div style={{ color: 'var(--gold-100)' }}>制作形态</div>
-              <div style={{ marginTop: 8, fontSize: 20, color: 'var(--text-dim)' }}>
-                公示页 / 可目录进入详情；公众教育区建议海报轮播，体验区建议目录+详情。
+            <div className="glass" style={{ padding: 16 }}>
+              <div style={{ color: 'var(--gold)', fontSize: 14 }}>建议形态</div>
+              <div style={{ marginTop: 8, fontSize: 18, color: 'var(--muted)' }}>
+                教育区海报轮播；体验区目录 + 详情
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </Stage>
   )

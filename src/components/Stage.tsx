@@ -3,23 +3,22 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 type Props = {
   width: number
   height: number
-  label: string
-  note?: string
+  title: string
+  sizeLabel: string
+  hint?: string
   children: ReactNode
 }
 
-/** 按视口等比缩放的大屏舞台，便于笔记本演示超宽分辨率 */
-export function Stage({ width, height, label, note, children }: Props) {
+export function Stage({ width, height, title, sizeLabel, hint, children }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(0.3)
+  const [scale, setScale] = useState(0.28)
 
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
     const update = () => {
-      const pad = 36
-      const availW = Math.max(320, el.clientWidth - pad)
-      const availH = Math.max(240, window.innerHeight - 140)
+      const availW = Math.max(320, el.clientWidth - 8)
+      const availH = Math.max(240, window.innerHeight - 132)
       setScale(Math.min(availW / width, availH / height, 1))
     }
     update()
@@ -34,14 +33,14 @@ export function Stage({ width, height, label, note, children }: Props) {
 
   return (
     <div className="stage-wrap" ref={wrapRef}>
-      <div className="stage-meta">
+      <div className="stage-toolbar">
         <div>
-          <strong style={{ color: 'var(--gold-100)' }}>{label}</strong>
-          <div>
-            设计分辨率 {width}×{height} · 当前缩放 {(scale * 100).toFixed(0)}%
+          <h1>{title}</h1>
+          <div className="meta">
+            {sizeLabel} · 缩放 {(scale * 100).toFixed(0)}%
           </div>
         </div>
-        {note ? <div style={{ textAlign: 'right', maxWidth: 520 }}>{note}</div> : null}
+        {hint ? <div className="hint">{hint}</div> : null}
       </div>
       <div className="stage-frame" style={{ width: width * scale, height: height * scale }}>
         <div className="stage-scaler" style={{ width, height, transform: `scale(${scale})` }}>

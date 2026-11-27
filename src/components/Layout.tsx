@@ -4,10 +4,10 @@ import { confirms } from '../data/content'
 
 const links = [
   { to: '/', label: '总览', end: true },
-  { to: '/screen-a', label: 'A 行内数据' },
-  { to: '/screen-b', label: 'B 互动大屏' },
-  { to: '/screen-c', label: 'C 点位/笑脸墙' },
-  { to: '/screen-d', label: 'D 电子屏公示' },
+  { to: '/screen-a', label: '行内数据' },
+  { to: '/screen-b', label: '互动大屏' },
+  { to: '/screen-c', label: '点位 / 笑脸墙' },
+  { to: '/screen-d', label: '电子屏公示' },
 ]
 
 export function Layout() {
@@ -17,8 +17,11 @@ export function Layout() {
     <div className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <strong>云南农商银行 · 展陈交互原型</strong>
-          <span>需求核对版 · 三维以示意图替代 · 数据与逻辑可点验</span>
+          <span className="brand-mark" aria-hidden />
+          <div>
+            <strong>云南农商银行 · 展陈原型</strong>
+            <span>需求核对 · 逻辑与数据可点验</span>
+          </div>
         </div>
         <nav className="top-nav">
           {links.map((l) => (
@@ -27,9 +30,11 @@ export function Layout() {
             </NavLink>
           ))}
         </nav>
-        <button type="button" className="confirm-toggle" onClick={() => setOpen((v) => !v)}>
-          待确认 {confirms.length}
-        </button>
+        <div className="topbar-actions">
+          <button type="button" className="confirm-toggle" onClick={() => setOpen((v) => !v)}>
+            待确认 {confirms.length}
+          </button>
+        </div>
       </header>
       {open ? (
         <aside className="confirm-drawer">

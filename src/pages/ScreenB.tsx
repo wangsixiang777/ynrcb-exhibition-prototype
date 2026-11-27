@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Stage } from '../components/Stage'
 import {
   borderCounties,
@@ -12,22 +12,28 @@ import {
   specialtyBranches,
 } from '../data/content'
 
-type Module =
-  | 'network'
-  | 'specialty'
-  | 'border'
-  | 'happy'
-  | 'revitalize'
-  | 'overseas'
+type Module = 'network' | 'specialty' | 'border' | 'happy' | 'revitalize' | 'overseas'
 
 const modules: { id: Module; label: string }[] = [
-  { id: 'network', label: '一 · 网点分布' },
-  { id: 'specialty', label: '二 · 特色网点' },
-  { id: 'border', label: '三 · 边境县' },
-  { id: 'happy', label: '四 · 幸福村' },
-  { id: 'revitalize', label: '五 · 帮扶县' },
-  { id: 'overseas', label: '六 · 境外金融' },
+  { id: 'network', label: '网点分布' },
+  { id: 'specialty', label: '特色网点' },
+  { id: 'border', label: '边境县' },
+  { id: 'happy', label: '幸福村' },
+  { id: 'revitalize', label: '帮扶县' },
+  { id: 'overseas', label: '境外金融' },
 ]
+
+function Stat({ label, value, unit }: { label: string; value: string; unit?: string }) {
+  return (
+    <div className="glass" style={{ padding: '18px 20px' }}>
+      <div style={{ fontSize: 16, color: 'var(--muted)' }}>{label}</div>
+      <div style={{ marginTop: 8, display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <span className="num" style={{ fontSize: 40, lineHeight: 1 }}>{value}</span>
+        {unit ? <span style={{ fontSize: 16, color: 'var(--muted-2)' }}>{unit}</span> : null}
+      </div>
+    </div>
+  )
+}
 
 export function ScreenB() {
   const [mod, setMod] = useState<Module>('network')
@@ -56,49 +62,41 @@ export function ScreenB() {
       setBorderIdx(i)
       setPopups((prev) => [...prev, { name: item.name, n: item.n }])
       i += 1
-    }, 700)
+    }, 650)
     return () => window.clearInterval(timer)
   }, [playing, mod])
 
-  const levelLabel = networkStats.levels[level]?.name ?? ''
-
-  const mapBadge = useMemo(() => {
-    if (mod === 'network') return `当前演示层级：${levelLabel}（点位为示意抽样，非 GIS 真坐标）`
-    if (mod === 'specialty') return `聚焦特色网点：${branch.name}`
-    if (mod === 'border') return `边境县跑马灯：${borderCounties[borderIdx]?.name ?? ''}（弹窗不消失）`
-    if (mod === 'happy') return `边境幸福村网点 ${happyVillage.total} 个`
-    if (mod === 'revitalize')
-      return revType === 'national'
-        ? `国家级帮扶县 ${revitalization.national.counties} 个`
-        : `省级帮扶县 ${revitalization.provincial.counties} 个`
-    return '云南版图缩小，示意周边国家方向'
-  }, [mod, levelLabel, branch.name, borderIdx, revType])
-
   return (
-    <Stage width={3584} height={2048} label={screenMeta.B.title} note={screenMeta.B.note}>
-      <div className="hud-screen" style={{ padding: '40px 48px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+    <Stage
+      width={3584}
+      height={2048}
+      title={screenMeta.B.title}
+      sizeLabel={screenMeta.B.size}
+      hint="沙盘为示意图。底部切换六大板块；弹窗与跑马灯用于核对交互逻辑。"
+    >
+      <div className="hud" style={{ padding: '40px 48px 36px', display: 'grid', gridTemplateRows: 'auto 1fr auto', gap: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
-            <div className="hud-title" style={{ fontSize: 44 }}>云南农商银行 · 金融服务展示</div>
-            <div style={{ color: 'var(--text-dim)', fontSize: 20, marginTop: 6 }}>{mapBadge}</div>
+            <div className="title-cn" style={{ fontSize: 42 }}>金融服务展示</div>
+            <div style={{ marginTop: 6, fontSize: 20, color: 'var(--muted)' }}>
+              {modules.find((m) => m.id === mod)?.label}
+              {mod === 'network' ? ` · 当前层级 ${networkStats.levels[level].name}` : ''}
+              {mod === 'border' && borderCounties[borderIdx] ? ` · ${borderCounties[borderIdx].name}` : ''}
+            </div>
           </div>
-          <div className="logic-note" style={{ maxWidth: 900 }}>
-            沙盘三维用示意图替代。本页核对：六大板块入口、左右栏字段、弹窗文案与动效逻辑（辐射点亮 / 跑马灯 /
-            收束改制）。
-          </div>
+          <div className="chip">示意图替代三维沙盘</div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '760px 1fr 760px', gap: 24, height: 1680 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '680px 1fr 680px', gap: 22, minHeight: 0 }}>
           {/* left */}
-          <div style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
+          <div style={{ display: 'grid', gap: 14, alignContent: 'start' }}>
             {mod === 'network' && (
               <>
-                <SideStat title="营业网点总数" value={`${networkStats.outlets}`} unit="个" />
-                <SideStat title="自助银行" value={`${networkStats.selfBanks}`} unit="个" />
-                <SideStat title="服务站 / 支付点" value={networkStats.serviceStations} unit={`/ ${networkStats.payPoints}`} />
-                <SideStat title="覆盖乡镇" value={`${networkStats.townships}`} unit="个" />
-                <div className="panel" style={{ padding: 20 }}>
-                  <div style={{ color: 'var(--gold-100)', marginBottom: 8, fontSize: 22 }}>层级点亮逻辑</div>
+                <Stat label="营业网点" value={`${networkStats.outlets}`} unit="个" />
+                <Stat label="覆盖乡镇" value={`${networkStats.townships}`} unit="个" />
+                <Stat label="服务站 / 支付点" value={networkStats.serviceStations} unit={networkStats.payPoints} />
+                <div className="glass" style={{ padding: 18 }}>
+                  <div style={{ fontSize: 16, color: 'var(--muted)', marginBottom: 10 }}>层级点亮</div>
                   {networkStats.levels.map((l, idx) => (
                     <button
                       key={l.name}
@@ -106,270 +104,246 @@ export function ScreenB() {
                       onClick={() => setLevel(idx)}
                       style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
                         width: '100%',
-                        padding: '12px 10px',
-                        borderBottom: '1px solid rgba(232,184,74,0.12)',
-                        color: idx <= level ? 'var(--gold-100)' : 'var(--text-dim)',
-                        fontSize: 22,
+                        justifyContent: 'space-between',
+                        padding: '12px 4px',
+                        borderBottom: '1px solid rgba(224,179,90,0.1)',
+                        color: idx <= level ? 'var(--gold-soft)' : 'var(--muted-2)',
+                        fontSize: 20,
                       }}
                     >
-                      <span>
-                        {idx + 1}. {l.name}
-                      </span>
-                      <span className="stat-num">{l.count}</span>
+                      <span>{l.name}</span>
+                      <span className="num">{l.count}</span>
                     </button>
                   ))}
                   <button
                     type="button"
-                    className="gold-btn"
-                    style={{ marginTop: 14, width: '100%' }}
+                    className="btn-primary"
+                    style={{ width: '100%', marginTop: 14 }}
                     onClick={() =>
                       setModal({
-                        title: '农商行改制（弹窗示意）',
-                        body: '交互：全省星光点点收束汇聚至昆明总行后弹出。正文待甲方提供改制介绍。',
+                        title: '农商行改制',
+                        body: '交互：全省网点星光收束至昆明总行后弹出。改制介绍正文待甲方提供。',
                       })
                     }
                   >
-                    二级按钮 · 农商行改制
+                    农商行改制
                   </button>
                 </div>
               </>
             )}
 
             {mod === 'specialty' && (
-              <div className="panel" style={{ padding: 22 }}>
-                <div className="tag">{branch.tag}</div>
-                <h3 style={{ fontSize: 34, color: 'var(--gold-100)', margin: '10px 0' }}>{branch.name}</h3>
-                <p style={{ fontSize: 22, lineHeight: 1.7, color: 'var(--text-dim)' }}>{branch.text}</p>
+              <div className="glass" style={{ padding: 24 }}>
+                <span className="chip">{branch.tag}</span>
+                <div className="title-cn" style={{ fontSize: 32, marginTop: 12 }}>{branch.name}</div>
+                <p style={{ marginTop: 14, fontSize: 20, lineHeight: 1.75, color: 'var(--muted)' }}>{branch.text}</p>
                 {branch.id === 'dulong' && (
-                  <div style={{ marginTop: 16 }} className="logic-note">
-                    {povertyCase.title}
-                    <br />
-                    {povertyCase.paras[0]}
-                  </div>
+                  <p style={{ marginTop: 16, fontSize: 18, lineHeight: 1.7, color: 'var(--gold-soft)' }}>
+                    {povertyCase.title}：{povertyCase.paras[1]}
+                  </p>
                 )}
               </div>
             )}
 
             {mod === 'border' && (
               <>
-                <SideStat title="边境县数量" value={`${borderSide.counties}`} unit="个" />
-                <SideStat title="边境网点约" value={`${borderSide.branches}`} unit="个" />
-                <div className="panel" style={{ padding: 20, fontSize: 22, lineHeight: 1.6, color: 'var(--text-dim)' }}>
-                  <div style={{ color: 'var(--gold-100)', marginBottom: 8 }}>跨境相关数据</div>
+                <Stat label="边境县" value={`${borderSide.counties}`} unit="个" />
+                <Stat label="边境网点约" value={`${borderSide.branches}`} unit="个" />
+                <div className="glass" style={{ padding: 20, fontSize: 18, lineHeight: 1.7, color: 'var(--muted)' }}>
                   <div>{borderSide.settlement}</div>
                   <div>{borderSide.usd}</div>
-                  <div>{borderSide.mutual}</div>
-                  <div className="tag warn" style={{ marginTop: 10 }}>
-                    {borderSide.note}
-                  </div>
+                  <div style={{ marginTop: 8 }} className="chip warn">{borderSide.note}</div>
                 </div>
               </>
             )}
 
             {mod === 'happy' && (
               <>
-                <SideStat title="边境幸福村网点" value={`${happyVillage.total}`} unit="个" />
-                <SideStat title="贷款余额" value={happyVillage.loan} unit="" />
-                <div className="logic-note">{happyVillage.note}；覆盖人数待编/待核</div>
+                <Stat label="幸福村网点" value={`${happyVillage.total}`} unit="个" />
+                <Stat label="贷款余额" value={happyVillage.loan} />
+                <div className="glass" style={{ padding: 20, color: 'var(--muted)', fontSize: 18 }}>{happyVillage.note}</div>
               </>
             )}
 
             {mod === 'revitalize' && (
               <>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button type="button" className={revType === 'national' ? 'gold-btn' : 'ghost-btn'} onClick={() => setRevType('national')}>
-                    国家级
-                  </button>
-                  <button type="button" className={revType === 'provincial' ? 'gold-btn' : 'ghost-btn'} onClick={() => setRevType('provincial')}>
-                    省级
-                  </button>
+                <div className="seg">
+                  <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级</button>
+                  <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级</button>
                 </div>
-                <SideStat
-                  title={revType === 'national' ? '国家重点帮扶县' : '省级帮扶县'}
+                <Stat
+                  label={revType === 'national' ? '国家重点帮扶县' : '省级帮扶县'}
                   value={`${revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}`}
                   unit="个"
                 />
-                <SideStat
-                  title="对应网点数"
+                <Stat
+                  label="网点数"
                   value={`${revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}`}
                   unit="个"
                 />
-                <div className="panel" style={{ padding: 18, fontSize: 22, color: 'var(--text-dim)', lineHeight: 1.6 }}>
+                <div className="glass" style={{ padding: 20, fontSize: 18, lineHeight: 1.7, color: 'var(--muted)' }}>
                   {revType === 'national' ? revitalization.national.tip : revitalization.provincial.tip}
                 </div>
               </>
             )}
 
             {mod === 'overseas' && (
-              <div className="panel" style={{ padding: 22 }}>
-                <div style={{ color: 'var(--gold-100)', fontSize: 24, marginBottom: 12 }}>二级按钮</div>
+              <div className="glass" style={{ padding: 20, display: 'grid', gap: 12 }}>
                 {overseas.map((o) => (
                   <button
                     key={o.id}
                     type="button"
-                    className="ghost-btn"
-                    style={{ display: 'block', width: '100%', marginBottom: 12, textAlign: 'left' }}
+                    className="btn-ghost"
+                    style={{ justifyContent: 'space-between' }}
                     onClick={() => setModal({ title: o.title, body: o.body })}
                   >
-                    {o.title} →
+                    <span>{o.title}</span>
+                    <span>→</span>
                   </button>
                 ))}
-                <div className="logic-note">箭头动效示意：指向老挝 / 越南 / 缅甸；API 强调中老直联。</div>
               </div>
             )}
           </div>
 
-          {/* center map */}
-          <div className="panel panel-strong" style={{ position: 'relative', overflow: 'hidden' }}>
+          {/* map */}
+          <div className="glass-strong" style={{ position: 'relative', overflow: 'hidden', minHeight: 980 }}>
             <img
               src="./maps/yunnan-map-sandtable.jpg"
               alt="云南沙盘示意图"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.92 }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
             />
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
                 background:
-                  'radial-gradient(circle at 50% 45%, transparent 20%, rgba(8,5,2,0.55) 75%), linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.45))',
+                  'radial-gradient(circle at 50% 48%, transparent 18%, rgba(8,5,2,0.55) 78%), linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.4))',
               }}
             />
-
-            {/* decorative points */}
-            {Array.from({ length: 18 + level * 8 }).map((_, i) => (
+            {Array.from({ length: 16 + level * 7 }).map((_, i) => (
               <span
                 key={i}
                 style={{
                   position: 'absolute',
-                  left: `${12 + ((i * 37) % 76)}%`,
-                  top: `${18 + ((i * 53) % 64)}%`,
-                  width: 8 + (i % 3) * 3,
-                  height: 8 + (i % 3) * 3,
+                  left: `${14 + ((i * 41) % 72)}%`,
+                  top: `${20 + ((i * 47) % 58)}%`,
+                  width: 7 + (i % 3) * 3,
+                  height: 7 + (i % 3) * 3,
                   borderRadius: '50%',
-                  background: i < 3 + level * 2 ? 'var(--gold-200)' : 'rgba(232,184,74,0.35)',
-                  boxShadow: i < 3 + level * 2 ? '0 0 16px rgba(232,184,74,0.9)' : 'none',
+                  background: i < 4 + level * 2 ? 'var(--gold-soft)' : 'rgba(224,179,90,0.3)',
+                  boxShadow: i < 4 + level * 2 ? '0 0 14px rgba(224,179,90,0.85)' : 'none',
                 }}
               />
             ))}
-
             {mod === 'border' && (
-              <div style={{ position: 'absolute', right: 20, top: 20, display: 'grid', gap: 8, maxHeight: '70%', overflow: 'auto' }}>
+              <div style={{ position: 'absolute', right: 16, top: 16, display: 'grid', gap: 8, maxHeight: '72%', overflow: 'auto' }}>
                 {popups.map((p) => (
-                  <div key={p.name} className="panel" style={{ padding: '10px 14px', minWidth: 180 }}>
-                    <div style={{ color: 'var(--gold-100)' }}>{p.name}</div>
-                    <div className="stat-num">{p.n} 个网点</div>
+                  <div key={p.name} className="glass" style={{ padding: '10px 14px', minWidth: 150 }}>
+                    <div style={{ color: 'var(--gold-soft)' }}>{p.name}</div>
+                    <div className="num">{p.n} 个</div>
                   </div>
                 ))}
               </div>
             )}
-
-            <div style={{ position: 'absolute', left: 20, bottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {mod === 'border' && (
-                <button type="button" className="gold-btn" onClick={() => setPlaying(true)} disabled={playing}>
-                  {playing ? '跑马灯演示中…' : '演示：25县依次亮起'}
-                </button>
-              )}
+            <div style={{ position: 'absolute', left: 16, bottom: 16, display: 'flex', gap: 10 }}>
               {mod === 'network' && (
-                <button type="button" className="ghost-btn" onClick={() => setLevel((v) => Math.min(v + 1, networkStats.levels.length - 1))}>
-                  下一层级点亮
+                <button type="button" className="btn-ghost" onClick={() => setLevel((v) => Math.min(v + 1, networkStats.levels.length - 1))}>
+                  下一层级
                 </button>
               )}
-              <span className="tag">示意图 · 非实景三维</span>
+              {mod === 'border' && (
+                <button type="button" className="btn-primary" disabled={playing} onClick={() => setPlaying(true)}>
+                  {playing ? '演示中…' : '跑马灯演示'}
+                </button>
+              )}
             </div>
           </div>
 
           {/* right */}
-          <div style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
+          <div style={{ display: 'grid', gap: 14, alignContent: 'start' }}>
             {mod === 'specialty' ? (
               <>
-                <div className="panel" style={{ padding: 16, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <div className="glass" style={{ padding: 14, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {specialtyBranches.map((b) => (
                     <button
                       key={b.id}
                       type="button"
-                      className={branchId === b.id ? 'gold-btn' : 'ghost-btn'}
+                      className={branchId === b.id ? 'btn-primary' : 'btn-ghost'}
+                      style={{ height: 36 }}
                       onClick={() => setBranchId(b.id)}
                     >
-                      {b.name}
+                      {b.name.replace('市农商行营业部', '').replace('信用社', '')}
                     </button>
                   ))}
                 </div>
                 <div
-                  className="panel"
+                  className="glass"
                   style={{
-                    height: 520,
+                    height: 560,
                     display: 'grid',
                     placeItems: 'center',
-                    background:
-                      'linear-gradient(135deg, rgba(232,184,74,0.15), rgba(0,0,0,0.4))',
-                    fontSize: 24,
-                    color: 'var(--gold-100)',
                     textAlign: 'center',
                     padding: 24,
+                    background: 'linear-gradient(135deg, rgba(224,179,90,0.14), rgba(0,0,0,0.35))',
                   }}
                 >
-                  右侧网点实拍图位
-                  <div style={{ fontSize: 18, color: 'var(--text-dim)', marginTop: 10 }}>
-                    正式版接入「五个特色网点图文/网点照片」精修主图
+                  <div>
+                    <div className="title-cn" style={{ fontSize: 28 }}>网点实拍主图</div>
+                    <div style={{ marginTop: 10, color: 'var(--muted)', fontSize: 18 }}>正式接入特色网点照片精修图</div>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="panel" style={{ padding: 22 }}>
-                <div style={{ color: 'var(--gold-100)', fontSize: 24, marginBottom: 12 }}>本板块右侧展示建议</div>
-                <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--text-dim)', fontSize: 22, lineHeight: 1.7 }}>
+              <div className="glass" style={{ padding: 24 }}>
+                <div className="title-cn" style={{ fontSize: 24, marginBottom: 12 }}>本侧展示</div>
+                <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--muted)', fontSize: 20, lineHeight: 1.8 }}>
                   {mod === 'network' && (
                     <>
                       <li>基础金融全覆盖说明</li>
-                      <li>辐射动效说明文案</li>
-                      <li>改制入口说明</li>
+                      <li>由总行向外辐射的动效说明</li>
                     </>
                   )}
                   {mod === 'border' && (
                     <>
-                      <li>边境线长度（待数）</li>
-                      <li>口岸覆盖与边民互市</li>
+                      <li>口岸与边民互市</li>
                       <li>信贷投放补充位</li>
                     </>
                   )}
-                  {mod === 'happy' && <li>民族系列产品数据卡（待补）</li>}
-                  {mod === 'revitalize' && <li>区县名单摘要 / 高亮图例</li>}
-                  {mod === 'overseas' && <li>中老中越缅方向示意</li>}
+                  {mod === 'happy' && <li>民族系列产品数据卡</li>}
+                  {mod === 'revitalize' && <li>区县名单 / 高亮图例</li>}
+                  {mod === 'overseas' && <li>中老 / 中越 / 缅甸方向示意</li>}
                 </ul>
               </div>
             )}
+          </div>
+        </div>
 
-            <div className="panel" style={{ padding: 18 }}>
-              <div style={{ color: 'var(--gold-100)', marginBottom: 8 }}>板块导航</div>
-              <div style={{ display: 'grid', gap: 8 }}>
-                {modules.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    className={mod === m.id ? 'gold-btn' : 'ghost-btn'}
-                    style={{ textAlign: 'left' }}
-                    onClick={() => {
-                      setMod(m.id)
-                      setModal(null)
-                      setPlaying(false)
-                    }}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="seg">
+            {modules.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                className={mod === m.id ? 'is-active' : undefined}
+                onClick={() => {
+                  setMod(m.id)
+                  setModal(null)
+                  setPlaying(false)
+                }}
+              >
+                {m.label}
+              </button>
+            ))}
           </div>
         </div>
 
         {modal && (
           <div className="modal-mask" onClick={() => setModal(null)}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ fontSize: 28 }}>{modal.title}</h3>
-              <p style={{ fontSize: 18 }}>{modal.body}</p>
-              <button type="button" className="gold-btn" style={{ marginTop: 16 }} onClick={() => setModal(null)}>
+              <h3>{modal.title}</h3>
+              <p>{modal.body}</p>
+              <button type="button" className="btn-primary" style={{ marginTop: 18 }} onClick={() => setModal(null)}>
                 关闭
               </button>
             </div>
@@ -377,19 +351,5 @@ export function ScreenB() {
         )}
       </div>
     </Stage>
-  )
-}
-
-function SideStat({ title, value, unit }: { title: string; value: string; unit: string }) {
-  return (
-    <div className="panel" style={{ padding: '18px 20px' }}>
-      <div style={{ color: 'var(--text-dim)', fontSize: 18 }}>{title}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 6 }}>
-        <span className="stat-num" style={{ fontSize: 42 }}>
-          {value}
-        </span>
-        <span style={{ color: 'var(--text-dim)', fontSize: 18 }}>{unit}</span>
-      </div>
-    </div>
   )
 }
