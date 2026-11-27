@@ -499,10 +499,6 @@ export function ScreenB() {
                 <p className="viz-note">模拟占位，正式数据由客户填写。</p>
                 <MetricTiles items={borderSide.creditPlaceholders} />
               </div>
-              <div className="glass-card">
-                <h3>分县网点 · Top8</h3>
-                <HBars items={borderBars.slice(0, 8)} />
-              </div>
             </>
           )}
 
@@ -636,11 +632,31 @@ export function ScreenB() {
           )}
 
           {mod === 'border' && (
-            <div className="glass-card">
-              <p className="glass-kicker">边民互市</p>
-              <h3>贸易新业态综合服务系统</h3>
-              <p className="mutual-copy">{borderSide.mutual}</p>
-            </div>
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">网点排名</p>
+                <h3>分县网点 · 前 8</h3>
+                <HBars items={borderBars.slice(0, 8)} />
+              </div>
+              <div className="glass-card">
+                <p className="glass-kicker">边民互市</p>
+                <h3>{borderSide.mutualBoard.system}</h3>
+                <p className="mutual-line">{borderSide.mutualBoard.advantage}</p>
+                <div className="port-grid">
+                  {borderSide.mutualBoard.ports.map((name) => (
+                    <span key={name}>{name}</span>
+                  ))}
+                </div>
+                <p className="mutual-note">{borderSide.mutualBoard.portNote}</p>
+                <p className="mutual-note">支持 {borderSide.mutualBoard.supports.join('、')}</p>
+                <ol className="mutual-steps">
+                  {borderSide.mutualBoard.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+                <p className="mutual-result">{borderSide.mutualBoard.result}</p>
+              </div>
+            </>
           )}
 
           {mod === 'happy' && (
