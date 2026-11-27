@@ -500,12 +500,22 @@ export function ScreenB() {
           )}
 
           {mod === 'happy' && (
-            <div className="glass-card glass-hero">
-              <p className="glass-kicker">板块四 · 幸福村</p>
-              <div className="glass-kpi-row single">
-                <div><span>营业网点</span><strong className="num">{happyVillage.outlets}</strong></div>
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块四 · 幸福村</p>
+                <div className="glass-kpi-row">
+                  <div><span>幸福村</span><strong className="num">{happyVillage.villages}</strong></div>
+                  <div><span>边境村网点</span><strong className="num">{happyVillage.outlets}</strong></div>
+                  <div><span>覆盖人数</span><strong className="num">{happyVillage.people}<em>万</em></strong></div>
+                  <div><span>贷款余额</span><strong className="num">{happyVillage.loan}<em>亿</em></strong></div>
+                </div>
               </div>
-            </div>
+              <div className="glass-card">
+                <p className="glass-kicker">信贷数据</p>
+                <h3>民族系列信贷</h3>
+                <MetricTiles items={happyVillage.products} />
+              </div>
+            </>
           )}
 
           {mod === 'revitalize' && (
@@ -646,15 +656,6 @@ export function ScreenB() {
                 <p className="mutual-result">{borderSide.mutualBoard.result}</p>
               </div>
             </>
-          )}
-
-          {mod === 'happy' && (
-            <div className="glass-card glass-hero">
-              <p className="glass-kicker">贷款余额</p>
-              <div className="glass-kpi-row single">
-                <div><strong className="num">264.42<em>亿</em></strong></div>
-              </div>
-            </div>
           )}
 
           {mod === 'revitalize' && (

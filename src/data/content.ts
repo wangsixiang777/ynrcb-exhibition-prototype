@@ -246,9 +246,16 @@ export const borderSide = {
 }
 
 export const happyVillage = {
+  /** 网点、贷款余额为资料数；村数、覆盖人数及产品拆分为实例 */
+  villages: 486,
   outlets: 126,
-  loan: '264.42亿元',
-  missing: '幸福村总数、覆盖人数：需求列了字段，清单只给了营业网点 126 个。民族系列产品没有分项表。',
+  people: '87.6',
+  loan: '264.42',
+  products: [
+    { label: '兴边富民贷', value: '98.60亿' },
+    { label: '民族繁荣贷', value: '86.25亿' },
+    { label: '民族团结贷', value: '79.57亿' },
+  ],
 }
 
 export const revitalization = {
