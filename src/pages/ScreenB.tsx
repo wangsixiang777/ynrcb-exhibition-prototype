@@ -162,9 +162,9 @@ export function ScreenB() {
     }
   }, [cosmosKey])
 
-  /** 边境县：每秒一县自动跑马灯，跑完清零循环 */
+  /** 边境县 / 幸福村：每秒一县跑马灯；幸福村弹窗常驻不消失 */
   useEffect(() => {
-    if (mod !== 'border') {
+    if (mod !== 'border' && mod !== 'happy') {
       setBorderIdx(-1)
       setLitCounties([])
       return
@@ -172,10 +172,11 @@ export function ScreenB() {
     setLitCounties([])
     setBorderIdx(-1)
     let i = 0
+    const persistPop = mod === 'happy'
     const tick = () => {
       if (i >= borderCounties.length) {
         i = 0
-        setLitCounties([])
+        if (!persistPop) setLitCounties([])
       }
       const cur = i
       setBorderIdx(cur)
@@ -372,26 +373,46 @@ export function ScreenB() {
             </button>
           ))}
 
-          {(mod === 'border' || mod === 'happy') && borderPins.map((p, i) => {
-            const lit = litCounties.includes(i) || (mod === 'happy' && i < 14)
-            const hot = mod === 'border' && borderIdx === i
-            return (
-              <div
-                key={p.name}
-                className={`county-pin${lit ? ' lit' : ''}${hot ? ' hot' : ''}`}
-                style={{ left: `${p.left}%`, top: `${p.top}%` }}
-              >
-                <i className="county-dot" />
-                {hot ? <em className="county-pulse" /> : null}
-                {hot ? (
-                  <div className="county-pop is-new">
-                    <b>{p.name.replace('/芒市相关', '')}</b>
-                    <strong className="num">{p.n} 个网点</strong>
-                  </div>
-                ) : null}
+          {(mod === 'border' || mod === 'happy') && (
+            <>
+              <div className="county-dots-layer">
+                {borderPins.map((p, i) => {
+                  const lit = litCounties.includes(i)
+                  const hot = borderIdx === i
+                  return (
+                    <div
+                      key={p.name}
+                      className={`county-pin${lit ? ' lit' : ''}${hot ? ' hot' : ''}`}
+                      style={{ left: `${p.left}%`, top: `${p.top}%` }}
+                    >
+                      <i className="county-dot" />
+                      {hot ? <em className="county-pulse" /> : null}
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
+              <div className="county-pop-layer">
+                {borderPins.map((p, i) => {
+                  const lit = litCounties.includes(i)
+                  const hot = borderIdx === i
+                  const showPop = mod === 'happy' ? lit : hot
+                  if (!showPop) return null
+                  return (
+                    <div
+                      key={`pop-${p.name}`}
+                      className={`county-pop-anchor${hot ? ' is-hot' : ''}`}
+                      style={{ left: `${p.left}%`, top: `${p.top}%` }}
+                    >
+                      <div className={`county-pop${hot ? ' is-new' : ' is-stay'}`}>
+                        <b>{p.name.replace('/芒市相关', '')}</b>
+                        <strong className="num">{p.n} 个网点</strong>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
 
           {mod === 'revitalize' && radiationDots.slice(0, revType === 'national' ? 20 : 28).map((d, i) => (
             <span key={i} className="sand-dot soft" style={{ left: `${d.left}%`, top: `${d.top}%` }} />
@@ -650,12 +671,32 @@ export function ScreenB() {
           )}
 
           {mod === 'happy' && (
-            <div className="glass-card">
-              <p className="glass-kicker">沙盘说明</p>
-              <h3>边境县亮起示意</h3>
-              <p className="viz-lead">需求写明与边境县类似的跑马灯（地图依次高亮）。资料仅有幸福村网点 126、贷款余额 264.42 亿元；民族系列产品无分项表。</p>
-              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>切到边境县看沙盘</button>
-            </div>
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">沙盘跑马灯</p>
+                <h3>边境幸福村网点</h3>
+                <p className="viz-note">沿用边境县跑马灯：每秒一县；数量弹窗点亮后常驻不消失，层级高于点位。</p>
+                <div className="glass-kpi-row">
+                  <div><span>已点亮</span><strong className="num">{litCounties.length}<em>/25</em></strong></div>
+                  <div><span>当前县</span><strong className="num" style={{ fontSize: 18 }}>
+                    {borderCounties[borderIdx]?.name.replace('/芒市相关', '') || '—'}
+                  </strong></div>
+                </div>
+              </div>
+              <div className="glass-card">
+                <p className="glass-kicker">民族系列产品</p>
+                <h3>信贷产品（示意）</h3>
+                <p className="viz-note">资料无分项表，以下为占位，待客户填写。</p>
+                <MetricTiles
+                  items={[
+                    { label: '产品一', value: '—', tip: '待客户填写' },
+                    { label: '产品二', value: '—', tip: '待客户填写' },
+                    { label: '产品三', value: '—', tip: '待客户填写' },
+                    { label: '产品四', value: '—', tip: '待客户填写' },
+                  ]}
+                />
+              </div>
+            </>
           )}
 
           {mod === 'revitalize' && (
