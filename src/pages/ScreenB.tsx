@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Stage } from '../components/Stage'
-import { FlowBoard, HBars, MetricTiles } from '../components/VizBits'
+import { HBars, MetricTiles } from '../components/VizBits'
 import {
   borderCounties,
   povertyPhoto,
@@ -135,7 +135,7 @@ export function ScreenB() {
   const [modal, setModal] = useState<null | { title: string; body: string }>(null)
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
-  const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
+  const [peerId, setPeerId] = useState<'peers' | 'api'>('peers')
   /** 宇宙星空 → 云南沙盘 */
   const [cosmosPhase, setCosmosPhase] = useState<'intro' | 'zoom' | 'done'>('intro')
   const [cosmosKey, setCosmosKey] = useState(0)
@@ -240,7 +240,12 @@ export function ScreenB() {
   )
 
   const radiationDots = useMemo(() => makeRadiationDots(level), [level])
-  const peer = overseas.find((o) => (peerId === 'api' ? o.id === 'api' : o.id === 'peers'))!
+  const peer = overseas.find((o) => o.id === peerId)!
+  const openPeer = (id: 'peers' | 'api') => {
+    const item = overseas.find((o) => o.id === id)!
+    setPeerId(id)
+    setModal({ title: item.title, body: item.body })
+  }
 
   const switchMod = (id: Module) => {
     setMod(id)
@@ -255,7 +260,7 @@ export function ScreenB() {
     <Stage tone="viz">
       <div className={`bleed sand-bleed is-bright${cosmosOn ? ' cosmos-on' : ''}`}>
         <img
-          className={`bleed-bg${cosmosPhase === 'intro' ? ' is-far' : ''}${cosmosPhase === 'zoom' ? ' is-arrive' : ''}`}
+          className={`bleed-bg${cosmosPhase === 'intro' ? ' is-far' : ''}${cosmosPhase === 'zoom' ? ' is-arrive' : ''}${mod === 'overseas' && cosmosPhase === 'done' ? ' is-region' : ''}`}
           src={`${base}maps/yunnan-map-official.png`}
           alt=""
         />
@@ -422,10 +427,26 @@ export function ScreenB() {
           ))}
 
           {mod === 'overseas' && (
-            <div className="sand-arrows" aria-hidden>
-              <span className="arr vn">越南</span>
-              <span className="arr la">老挝</span>
-              <span className="arr mm">缅甸</span>
+            <div className="nation-layer" aria-hidden>
+              <span className="nation-tag mm">缅甸</span>
+              <span className="nation-tag la">老挝</span>
+              <span className="nation-tag vn">越南</span>
+              <svg className="nation-arrows" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <marker id="nationHead" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                    <path d="M0,0 L5,2.5 L0,5 Z" fill="#c4161c" />
+                  </marker>
+                </defs>
+                {peerId === 'api' ? (
+                  <path className="nation-flow" pathLength={1} markerEnd="url(#nationHead)" d="M 55 47 Q 51 62 47 76" />
+                ) : (
+                  <>
+                    <path className="nation-flow" pathLength={1} markerEnd="url(#nationHead)" d="M 55 47 Q 38 46 24 48" />
+                    <path className="nation-flow" pathLength={1} markerEnd="url(#nationHead)" d="M 55 47 Q 52 62 48 76" style={{ animationDelay: '0.4s' }} />
+                    <path className="nation-flow" pathLength={1} markerEnd="url(#nationHead)" d="M 55 47 Q 66 50 74 56" style={{ animationDelay: '0.8s' }} />
+                  </>
+                )}
+              </svg>
             </div>
           )}
         </div>
@@ -545,31 +566,20 @@ export function ScreenB() {
 
           {mod === 'overseas' && (
             <div className="glass-card">
-              <p className="glass-kicker">板块六 · 二级按钮</p>
-              <h3>选择服务能力</h3>
-              <div className="glass-btns">
+              <p className="glass-kicker">二级按钮</p>
+              <h3>境外金融</h3>
+              <div className="level-btns">
                 {overseas.map((o) => (
                   <button
                     key={o.id}
                     type="button"
-                    className={(o.id === 'api' ? peerId === 'api' : peerId !== 'api') ? 'is-on' : undefined}
-                    onClick={() => {
-                      setPeerId(o.id === 'api' ? 'api' : 'vn')
-                      setModal({ title: o.title, body: o.body })
-                    }}
+                    className={peerId === o.id ? 'is-on' : undefined}
+                    onClick={() => openPeer(o.id as 'peers' | 'api')}
                   >
-                    {o.title}
+                    <span>{o.title}</span>
                   </button>
                 ))}
               </div>
-              <FlowBoard
-                center="云南农信"
-                nodes={[
-                  { id: 'vn', label: '越南', count: 6, active: peerId === 'vn', onClick: () => setPeerId('vn') },
-                  { id: 'la', label: '老挝', count: 1, active: peerId === 'la', onClick: () => setPeerId('la') },
-                  { id: 'mm', label: '缅甸', count: 1, active: peerId === 'mm', onClick: () => setPeerId('mm') },
-                ]}
-              />
             </div>
           )}
         </aside>
@@ -680,10 +690,25 @@ export function ScreenB() {
 
           {mod === 'overseas' && (
             <div className="glass-card">
-              <p className="glass-kicker">说明弹窗内容</p>
+              <p className="glass-kicker">{peer.id === 'api' ? '中老直联' : '接入银行'}</p>
               <h3>{peer.title}</h3>
-              <p className="viz-lead">{peer.body}</p>
-              <button type="button" className="viz-cta" onClick={() => setModal({ title: peer.title, body: peer.body })}>打开弹窗</button>
+              {peer.id === 'peers' ? (
+                <div className="bank-row">
+                  {peer.banks.map((b) => (
+                    <div key={b.label}><span>{b.label}</span><strong className="num">{b.value}</strong></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rev-facts">
+                  {peer.banks.map((b) => (
+                    <div key={b.label} className="rev-fact">
+                      <span>{b.label}</span>
+                      <strong className="num">{b.value}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="mutual-copy" style={{ marginTop: 10 }}>{peer.body}</p>
             </div>
           )}
         </aside>
