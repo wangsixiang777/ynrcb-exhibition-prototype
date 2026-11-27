@@ -465,24 +465,18 @@ export function ScreenB() {
           )}
 
           {mod === 'specialty' && (
-            <>
-              <div className="glass-card">
-                <p className="glass-kicker">板块二 · 网点介绍</p>
-                <span className="chip">{branch.tag}</span>
-                <h3>{branch.name}</h3>
-                <p className="viz-lead">{branch.text}</p>
-                <div className="viz-chips compact">
-                  {branch.facts.slice(0, 4).map((f) => (
-                    <div key={f.k} className="viz-chip"><b>{f.k}</b><span>{f.v}</span></div>
-                  ))}
-                </div>
+            <div className="glass-card">
+              <p className="glass-kicker">二级按钮</p>
+              <h3>特色网点切换</h3>
+              <div className="spec-switches">
+                {specialtyBranches.map((b) => (
+                  <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
+                    <b>{b.short}</b>
+                    <em>{b.tag}</em>
+                  </button>
+                ))}
               </div>
-              <div className="glass-card spec-media">
-                <p className="glass-kicker">网点照片</p>
-                <img src={`${base}${branch.photo}`} alt={branch.name} />
-                {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
-              </div>
-            </>
+            </div>
           )}
 
           {mod === 'border' && (
@@ -613,18 +607,24 @@ export function ScreenB() {
           )}
 
           {mod === 'specialty' && (
-            <div className="glass-card">
-              <p className="glass-kicker">二级按钮</p>
-              <h3>特色网点切换</h3>
-              <div className="spec-switches">
-                {specialtyBranches.map((b) => (
-                  <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
-                    <b>{b.short}</b>
-                    <em>{b.tag}</em>
-                  </button>
-                ))}
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">板块二 · 网点介绍</p>
+                <span className="chip">{branch.tag}</span>
+                <h3>{branch.name}</h3>
+                <p className="viz-lead">{branch.text}</p>
+                <div className="viz-chips compact">
+                  {branch.facts.slice(0, 4).map((f) => (
+                    <div key={f.k} className="viz-chip"><b>{f.k}</b><span>{f.v}</span></div>
+                  ))}
+                </div>
               </div>
-            </div>
+              <div className="glass-card spec-media">
+                <p className="glass-kicker">网点照片</p>
+                <img src={`${base}${branch.photo}`} alt={branch.name} />
+                {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
+              </div>
+            </>
           )}
 
           {mod === 'border' && (
