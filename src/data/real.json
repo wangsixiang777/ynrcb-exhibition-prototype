@@ -1,0 +1,476 @@
+{
+  "branches": {
+    "dali": "real/branches/dali.jpg",
+    "hekou": "real/branches/hekou.jpg",
+    "dulong": "real/branches/dulong.jpg",
+    "yangla": "real/branches/yangla.jpg",
+    "penglai": "real/branches/penglai.jpg"
+  },
+  "poverty": "real/poverty.jpg",
+  "people": [
+    {
+      "name": "李亚珂",
+      "city": "红河",
+      "org": "泸西县联社",
+      "role": "风险管理部经理",
+      "photo": "real/smiles/红河-李亚珂.jpg"
+    },
+    {
+      "name": "陈伟",
+      "city": "红河",
+      "org": "石屏农商行",
+      "role": "党群工作部副部长",
+      "photo": "real/smiles/红河-陈伟.jpg"
+    },
+    {
+      "name": "何菲菲",
+      "city": "红河",
+      "org": "弥勒农商行",
+      "role": "党群工作部副部长",
+      "photo": "real/smiles/红河-何菲菲.jpg"
+    },
+    {
+      "name": "曹靓",
+      "city": "红河",
+      "org": "泸西县联社",
+      "role": "阿勒分社主任",
+      "photo": "real/smiles/红河-曹靓.jpg"
+    },
+    {
+      "name": "李艳",
+      "city": "红河",
+      "org": "开远市联社",
+      "role": "开远市联社党委工作部部长",
+      "photo": "real/smiles/红河-李艳.jpg"
+    },
+    {
+      "name": "李秋文",
+      "city": "红河",
+      "org": "绿春农商行",
+      "role": "牛孔支行行长",
+      "photo": "real/smiles/红河-李秋文.jpg"
+    },
+    {
+      "name": "周帮妍",
+      "city": "文山",
+      "org": "麻栗坡农商行",
+      "role": "综合部经理",
+      "photo": "real/smiles/文山-周帮妍.jpg"
+    },
+    {
+      "name": "胡显恒",
+      "city": "文山",
+      "org": "丘北农商行",
+      "role": "官寨支行支行长",
+      "photo": "real/smiles/文山-胡显恒.jpg"
+    },
+    {
+      "name": "姜波",
+      "city": "文山",
+      "org": "广南农商行",
+      "role": "湖心支行支行长",
+      "photo": "real/smiles/文山-姜波.jpg"
+    },
+    {
+      "name": "杨语涵",
+      "city": "楚雄",
+      "org": "楚雄市农商行",
+      "role": "楚雄市农商行信贷部员工",
+      "photo": "real/smiles/楚雄-杨语涵.jpg"
+    },
+    {
+      "name": "李保柱",
+      "city": "楚雄",
+      "org": "楚雄市农商行",
+      "role": "楚雄市农商行信贷部副经理",
+      "photo": "real/smiles/楚雄-李保柱.jpg"
+    },
+    {
+      "name": "李尚昆",
+      "city": "楚雄",
+      "org": "永仁县联社",
+      "role": "永仁县联社党委委员、理事会理事、综合部经理",
+      "photo": "real/smiles/楚雄-李尚昆.jpg"
+    },
+    {
+      "name": "饶乾春",
+      "city": "楚雄",
+      "org": "武定农商行",
+      "role": "武定县联社纪委办员工",
+      "photo": "real/smiles/楚雄-饶乾春.jpg"
+    },
+    {
+      "name": "尹发锐",
+      "city": "丽江",
+      "org": "玉龙农商行",
+      "role": "党群工作部部长",
+      "photo": "real/smiles/丽江-尹发锐.jpg"
+    },
+    {
+      "name": "石永丽",
+      "city": "丽江",
+      "org": "华坪农商行",
+      "role": "合规与风险管理部总经理",
+      "photo": "real/smiles/丽江-石永丽.jpg"
+    },
+    {
+      "name": "杨欣",
+      "city": "西双版纳",
+      "org": "勐腊农商行",
+      "role": "党群工作部部长兼任党委办公室主任",
+      "photo": "real/smiles/西双版纳-杨欣.jpg"
+    },
+    {
+      "name": "郑迎春",
+      "city": "西双版纳",
+      "org": "勐海农商行",
+      "role": "党群工作部 部长",
+      "photo": "real/smiles/西双版纳-郑迎春.jpg"
+    },
+    {
+      "name": "郑春武",
+      "city": "西双版纳",
+      "org": "景洪农商行",
+      "role": "景洪农商行勐旺支行行长",
+      "photo": "real/smiles/西双版纳-郑春武.jpg"
+    },
+    {
+      "name": "马超",
+      "city": "怒江",
+      "org": "怒江农商行",
+      "role": "怒江农商行党委工作部副部长",
+      "photo": "real/smiles/怒江-马超.jpg"
+    },
+    {
+      "name": "张春林",
+      "city": "怒江",
+      "org": "怒江农商行",
+      "role": "怒江农商行贡山支行营业部经理",
+      "photo": "real/smiles/怒江-张春林.jpg"
+    },
+    {
+      "name": "刘碧芳",
+      "city": "怒江",
+      "org": "怒江农商行",
+      "role": "怒江农商行泸水支行营业部经理",
+      "photo": "real/smiles/怒江-刘碧芳.jpg"
+    },
+    {
+      "name": "屈生平",
+      "city": "保山",
+      "org": "腾冲农商行",
+      "role": "腾冲农商行金融市场部副总经理",
+      "photo": "real/smiles/保山-屈生平.jpg"
+    },
+    {
+      "name": "唐云波",
+      "city": "普洱",
+      "org": "镇沅农商行",
+      "role": "镇沅农商行党委委员、党群工作部部长、综合党群党支部书记",
+      "photo": "real/smiles/普洱-唐云波.jpg"
+    },
+    {
+      "name": "明羽",
+      "city": "普洱",
+      "org": "思茅农商行",
+      "role": "财务会计部副经理",
+      "photo": "real/smiles/普洱-明羽.jpg"
+    },
+    {
+      "name": "杨文忠",
+      "city": "普洱",
+      "org": "景谷县联社",
+      "role": "景谷信用社主任",
+      "photo": "real/smiles/普洱-杨文忠.jpg"
+    },
+    {
+      "name": "罗丹",
+      "city": "曲靖",
+      "org": "罗平农商行",
+      "role": "罗平农商行党群工作部部长",
+      "photo": "real/smiles/曲靖-罗丹.jpg"
+    },
+    {
+      "name": "饶艳莉",
+      "city": "曲靖",
+      "org": "陆良农商行",
+      "role": "陆良农商行广场支行行长",
+      "photo": "real/smiles/曲靖-饶艳莉.jpg"
+    },
+    {
+      "name": "杨萍",
+      "city": "曲靖",
+      "org": "会泽农商行",
+      "role": "已退休",
+      "photo": "real/smiles/曲靖-杨萍.jpg"
+    },
+    {
+      "name": "陈红有",
+      "city": "曲靖",
+      "org": "麒麟区联社",
+      "role": "麒麟区联社越州信用社党支部书记、主任",
+      "photo": "real/smiles/曲靖-陈红有.jpg"
+    },
+    {
+      "name": "张海燕",
+      "city": "曲靖",
+      "org": "马龙区联社",
+      "role": "马龙区联社党群工作部部长",
+      "photo": "real/smiles/曲靖-张海燕.jpg"
+    },
+    {
+      "name": "马艳敏",
+      "city": "玉溪",
+      "org": "通海农商行",
+      "role": "通海农商行营业部综合柜员",
+      "photo": "real/smiles/玉溪-马艳敏.jpg"
+    },
+    {
+      "name": "钟强",
+      "city": "玉溪",
+      "org": "通海农商行",
+      "role": "通海农商行零售金融部、公司金融部经理",
+      "photo": "real/smiles/玉溪-钟强.jpg"
+    },
+    {
+      "name": "欧原榕",
+      "city": "玉溪",
+      "org": "易门农商行",
+      "role": "易门农商行党委委员、营业部经理",
+      "photo": "real/smiles/玉溪-欧原榕.jpg"
+    },
+    {
+      "name": "付苡辰",
+      "city": "玉溪",
+      "org": "江川区联社",
+      "role": "江川区联社办公室副主任",
+      "photo": "real/smiles/玉溪-付苡辰.jpg"
+    },
+    {
+      "name": "任继华",
+      "city": "玉溪",
+      "org": "红塔农商行",
+      "role": "红塔农商行办公室主任",
+      "photo": "real/smiles/玉溪-任继华.jpg"
+    },
+    {
+      "name": "吴光明",
+      "city": "昆明",
+      "org": "东川区联社",
+      "role": "营业部客户经理",
+      "photo": "real/smiles/昆明-吴光明.jpg"
+    },
+    {
+      "name": "杨凌波",
+      "city": "昆明",
+      "org": "嵩明农商行",
+      "role": "杨林支行行长",
+      "photo": "real/smiles/昆明-杨凌波.jpg"
+    },
+    {
+      "name": "杨忠能",
+      "city": "昆明",
+      "org": "嵩明农商行",
+      "role": "杨林经开区支行行长",
+      "photo": "real/smiles/昆明-杨忠能.jpg"
+    },
+    {
+      "name": "赵炜婧",
+      "city": "昆明",
+      "org": "官渡农合行",
+      "role": "党委支部（人力资源部）副部长（副经理）",
+      "photo": "real/smiles/昆明-赵炜婧.jpg"
+    },
+    {
+      "name": "陈雪梅",
+      "city": "迪庆",
+      "org": "迪庆农商行",
+      "role": "维西永春支行行长",
+      "photo": "real/smiles/迪庆-陈雪梅.jpg"
+    },
+    {
+      "name": "东春生",
+      "city": "迪庆",
+      "org": "迪庆农商行",
+      "role": "德钦叶枝支行客户经理",
+      "photo": "real/smiles/迪庆-东春生.jpg"
+    },
+    {
+      "name": "次永卓玛",
+      "city": "迪庆",
+      "org": "迪庆农商行",
+      "role": "德钦支行副行长",
+      "photo": "real/smiles/迪庆-次永卓玛.jpg"
+    },
+    {
+      "name": "次里区追",
+      "city": "迪庆",
+      "org": "迪庆农商行",
+      "role": "德钦支行综合部经理",
+      "photo": "real/smiles/迪庆-次里区追.jpg"
+    },
+    {
+      "name": "蒋学英",
+      "city": "迪庆",
+      "org": "迪庆农商行",
+      "role": "香格里拉城北支行综合柜员",
+      "photo": "real/smiles/迪庆-蒋学英.jpg"
+    },
+    {
+      "name": "李昶",
+      "city": "临沧",
+      "org": "临翔农商行",
+      "role": "临翔农商行党群工作部部长、团委书记、工会委员",
+      "photo": "real/smiles/临沧-李昶.jpg"
+    },
+    {
+      "name": "熊文涵",
+      "city": "临沧",
+      "org": "临翔农商行",
+      "role": "临翔农商行菜园支行党支部书记、支行行长",
+      "photo": "real/smiles/临沧-熊文涵.jpg"
+    },
+    {
+      "name": "周洋林",
+      "city": "临沧",
+      "org": "凤庆农商行",
+      "role": "凤庆农商行党委书记、董事长",
+      "photo": "real/smiles/临沧-周洋林.jpg"
+    },
+    {
+      "name": "杨植堂",
+      "city": "大理",
+      "org": "大理市农商行",
+      "role": "营业部总经理",
+      "photo": "real/smiles/大理-杨植堂.jpg"
+    },
+    {
+      "name": "杨绍良",
+      "city": "大理",
+      "org": "祥云农商行",
+      "role": "党委委员、纪委书记、监事长",
+      "photo": "real/smiles/大理-杨绍良.jpg"
+    },
+    {
+      "name": "李清",
+      "city": "大理",
+      "org": "宾川农商行",
+      "role": "办公室主任",
+      "photo": "real/smiles/大理-李清.jpg"
+    },
+    {
+      "name": "王珍洁",
+      "city": "大理",
+      "org": "剑川农商行",
+      "role": "信贷管理部副总经理",
+      "photo": "real/smiles/大理-王珍洁.jpg"
+    },
+    {
+      "name": "施堉钢",
+      "city": "大理",
+      "org": "永平农商行",
+      "role": "水泄支行长",
+      "photo": "real/smiles/大理-施堉钢.jpg"
+    },
+    {
+      "name": "马昌鸿",
+      "city": "保山",
+      "org": "隆阳农商行",
+      "role": "营业部总经理",
+      "photo": "real/smiles/保山-马昌鸿.jpg"
+    },
+    {
+      "name": "赵龙兴",
+      "city": "保山",
+      "org": "腾冲农商行",
+      "role": "固东支行行长",
+      "photo": "real/smiles/保山-赵龙兴.jpg"
+    },
+    {
+      "name": "宋应敏",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "党委委员、副行长",
+      "photo": "real/smiles/德宏-宋应敏.jpg"
+    },
+    {
+      "name": "莫广才",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "运维安全部副总经理",
+      "photo": "real/smiles/德宏-莫广才.jpg"
+    },
+    {
+      "name": "段宁南",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "芒市支行营业部经理",
+      "photo": "real/smiles/德宏-段宁南.jpg"
+    },
+    {
+      "name": "杨春美",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "芒市支行营业部副经理",
+      "photo": "real/smiles/德宏-杨春美.jpg"
+    },
+    {
+      "name": "秦微",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "盈江支行综合部经理",
+      "photo": "real/smiles/德宏-秦微.jpg"
+    },
+    {
+      "name": "彭诗媛",
+      "city": "德宏",
+      "org": "德宏农商行",
+      "role": "党委工作部职员",
+      "photo": "real/smiles/德宏-彭诗媛.jpg"
+    },
+    {
+      "name": "刘肖",
+      "city": "昭通",
+      "org": "大关农商行",
+      "role": "天星支行行长",
+      "photo": "real/smiles/昭通-刘肖.jpg"
+    },
+    {
+      "name": "崔大学",
+      "city": "昭通",
+      "org": "大关农商行",
+      "role": "靖安支行行长",
+      "photo": "real/smiles/昭通-崔大学.jpg"
+    },
+    {
+      "name": "李桔芳",
+      "city": "昭通",
+      "org": "大关农商行",
+      "role": "党群工作部部长",
+      "photo": "real/smiles/昭通-李桔芳.jpg"
+    },
+    {
+      "name": "康燕",
+      "city": "昭通",
+      "org": "鲁甸县联社",
+      "role": "综合部经理",
+      "photo": "real/smiles/昭通-康燕.jpg"
+    },
+    {
+      "name": "张明元",
+      "city": "昭通",
+      "org": "巧家农商行",
+      "role": "党群工作部部长",
+      "photo": "real/smiles/昭通-张明元.jpg"
+    },
+    {
+      "name": "方润",
+      "city": "昭通",
+      "org": "昭阳农村商业银行",
+      "role": "党委工作部部部长",
+      "photo": "real/smiles/昭通-方润.jpg"
+    }
+  ],
+  "matched": 66,
+  "total": 66
+}

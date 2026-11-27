@@ -1,17 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Stage } from '../components/Stage'
 import { screenMeta, smilePeople, threePositions } from '../data/content'
 
 type Mode = 'positions' | 'wall-float' | 'wall-text'
 
+const chars = '云南农商银行'.split('')
+
 export function ScreenC() {
   const [mode, setMode] = useState<Mode>('positions')
   const [posId, setPosId] = useState(threePositions[0].id)
   const pos = threePositions.find((p) => p.id === posId)!
-  const layout = useMemo(
-    () => smilePeople.map((p, i) => ({ ...p, left: 4 + ((i * 17) % 88), top: 8 + ((i * 23) % 72), delay: (i % 6) * 0.35 })),
-    [],
-  )
+  const spelled = chars.map((ch, i) => ({
+    ch,
+    people: smilePeople.filter((_, idx) => idx % chars.length === i),
+  }))
 
   return (
     <Stage title={screenMeta.C.title} hint="预览 1920×1080 · 三大定位入口，笑脸墙拼 logo 暂缓">
@@ -44,25 +46,29 @@ export function ScreenC() {
           </div>
         ) : (
           <div className="wall">
-            {mode === 'wall-float' && layout.map((p) => (
-              <div key={p.name} className="float-item" style={{ left: `${p.left}%`, top: `${p.top}%`, animationDelay: `${p.delay}s` }}>
-                <div className="face">{p.name.slice(0, 1)}</div>
-                <small>{p.name}</small>
-              </div>
-            ))}
-            {mode === 'wall-text' && (
-              <div className="word">
-                <div>
-                  <div className="word-row">
-                    {'云南农商银行'.split('').map((ch, i) => (
-                      <div key={`${ch}-${i}`}>
-                        <div className="face" style={{ margin: '0 auto' }}>{smilePeople[i % smilePeople.length].name.slice(0, 1)}</div>
-                        <div className="ch">{ch}</div>
-                      </div>
-                    ))}
+            {mode === 'wall-float' && (
+              <div className="portrait-grid">
+                {smilePeople.map((p, i) => (
+                  <div key={`${p.city}-${p.name}`} className="portrait" style={{ animationDelay: `${(i % 8) * 0.12}s` }}>
+                    <img src={`${import.meta.env.BASE_URL}${p.photo}`} alt={p.name} />
+                    <small>{p.name}</small>
+                    <em>{p.city}</em>
                   </div>
-                  <div style={{ textAlign: 'center', marginTop: 12 }}><span className="chip">正式版接入 66 张笑脸原图</span></div>
-                </div>
+                ))}
+              </div>
+            )}
+            {mode === 'wall-text' && (
+              <div className="spell">
+                {spelled.map((col) => (
+                  <div key={col.ch} className="spell-col">
+                    <div className="ch">{col.ch}</div>
+                    <div className="spell-faces">
+                      {col.people.map((p) => (
+                        <img key={`${p.city}-${p.name}`} src={`${import.meta.env.BASE_URL}${p.photo}`} alt={p.name} title={`${p.name} · ${p.role}`} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

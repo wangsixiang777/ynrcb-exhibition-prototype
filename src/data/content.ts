@@ -1,4 +1,5 @@
-/** 需求核对用的结构化内容与待确认项 —— 来自甲方资料整理 */
+/** 需求核对用的结构化内容。网点介绍、人员与照片来自资料包原件。 */
+import real from './real.json'
 
 export type ConfirmItem = {
   id: string
@@ -83,33 +84,40 @@ export const networkStats = {
   ],
 }
 
+export const realAssets = real
+
 export const specialtyBranches = [
   {
     id: 'dali',
+    photo: real.branches.dali,
     name: '大理市农商行营业部',
     tag: '百佳示范',
     text: '全国银行业文明规范服务百佳示范单位，西部地区首家获评百佳的农信网点。以“耕耘苍洱，信守乡愁”为文化内核，打造有民族底蕴、生态底色、农信温度的标杆金融窗口。',
   },
   {
     id: 'dulong',
+    photo: real.branches.dulong,
     name: '独龙江信用社',
     tag: '减贫案例',
     text: '全国唯一独龙族聚居乡内仅有的实体金融网点。传承“三水”精神，双语服务，整族授信，赋能草果、独龙牛等特色产业。2019年39天完成整族授信。',
   },
   {
     id: 'hekou',
+    photo: real.branches.hekou,
     name: '河口信用社',
     tag: '海拔最低',
     text: '地处云南海拔最低河谷国门，紧邻河口口岸，服务边民互市、跨境商贸、口岸物流，畅通跨境结算，助力沿边开放、兴边富民。',
   },
   {
     id: 'penglai',
+    photo: real.branches.penglai,
     name: '蓬莱信用社',
     tag: '云南第一家',
     text: '1952年云南省第一家信用合作社——宜良蓬莱乡信用社诞生，是云南农信星星之火。老一辈农信人肩背帆布包、手持算盘，开启深耕乡土征程。',
   },
   {
     id: 'yangla',
+    photo: real.branches.yangla,
     name: '羊拉信用社',
     tag: '海拔最高',
     text: '坐落于云南北极、滇川藏交界羊拉乡，全省海拔最高农信网点。藏汉双语服务，上门金融服务，助力虫草、畜牧等高原特色产业。',
@@ -216,32 +224,15 @@ export const threePositions = [
   },
 ]
 
-export const smilePeople = [
-  { name: '李亚珂', city: '红河', role: '泸西县联社 · 风险管理部经理' },
-  { name: '陈伟', city: '红河', role: '石屏农商行 · 党群工作部副部长' },
-  { name: '何菲菲', city: '红河', role: '弥勒农商行 · 党群工作部副部长' },
-  { name: '杨植堂', city: '大理', role: '大理市农商行营业部总经理' },
-  { name: '杨绍良', city: '大理', role: '祥云农商行 · 监事长' },
-  { name: '周洋林', city: '临沧', role: '凤庆农商行 · 党委书记、董事长' },
-  { name: '石永丽', city: '丽江', role: '华坪农商行 · 合规与风险管理部总经理' },
-  { name: '宋应敏', city: '德宏', role: '德宏农商行 · 副行长' },
-  { name: '马超', city: '怒江', role: '怒江农商行 · 党委工作部副部长' },
-  { name: '罗丹', city: '曲靖', role: '罗平农商行 · 党群工作部部长' },
-  { name: '明羽', city: '普洱', role: '思茅农商行 · 财务会计部副经理' },
-  { name: '任继华', city: '玉溪', role: '红塔农商行 · 办公室主任' },
-  { name: '东春生', city: '迪庆', role: '德钦叶枝支行 · 客户经理' },
-  { name: '次永卓玛', city: '迪庆', role: '德钦支行 · 副行长' },
-  { name: '吴光明', city: '昆明', role: '东川区联社 · 客户经理' },
-  { name: '赵炜婧', city: '昆明', role: '官渡农合行 · 党委组织部副部长' },
-  { name: '姜波', city: '文山', role: '广南农商行湖心支行行长' },
-  { name: '胡显恒', city: '文山', role: '丘北农商行官寨支行支行长' },
-  { name: '李保柱', city: '楚雄', role: '楚雄市农商行信贷部副经理' },
-  { name: '郑迎春', city: '版纳', role: '勐海农商行党群工作部' },
-  { name: '方润', city: '昭通', role: '昭阳农商行党委工作部部长' },
-  { name: '张明元', city: '昭通', role: '巧家农商行党群工作部部长' },
-  { name: '熊文涵', city: '临沧', role: '临翔农商行菜园支行行长' },
-  { name: '马昌鸿', city: '保山', role: '隆阳农商行营业部总经理' },
-]
+export const smilePeople = real.people.map((p) => ({
+  name: p.name,
+  city: p.city,
+  org: p.org,
+  role: `${p.org} · ${p.role}`,
+  photo: p.photo,
+}))
+
+export const povertyPhoto = real.poverty
 
 export const eScreens = [
   {

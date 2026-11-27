@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Stage } from '../components/Stage'
-import { depositPanels, wealthProducts, screenMeta } from '../data/content'
+import { depositPanels, realAssets, screenMeta } from '../data/content'
 
 type Tab = 'deposit' | 'wealth' | 'third'
 
@@ -9,7 +9,7 @@ function RateCard({ title, rows, tip }: { title: string; rows: { term: string; r
     <div className="glass rate-card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <h3 className="title-cn">{title}</h3>
-        <span className="chip">{rows.length}</span>
+        <span className="chip warn">PPT示意</span>
       </div>
       <table className="data-table">
         <thead>
@@ -31,23 +31,11 @@ function RateCard({ title, rows, tip }: { title: string; rows: { term: string; r
 
 export function ScreenA() {
   const [tab, setTab] = useState<Tab>('deposit')
-  const left = tab === 'deposit'
-    ? depositPanels.slice(0, 2)
-    : wealthProducts.slice(0, 2).map((p) => ({
-        title: p.name,
-        rows: [{ term: '期限', rate: p.term }, { term: '风险', rate: p.risk }, { term: '参考', rate: p.rate }],
-        tip: '示例数据，正式以产品说明书为准',
-      }))
-  const right = tab === 'deposit'
-    ? depositPanels.slice(2)
-    : wealthProducts.slice(2).map((p) => ({
-        title: p.name,
-        rows: [{ term: '期限', rate: p.term }, { term: '风险', rate: p.risk }, { term: '参考', rate: p.rate }],
-        tip: '示例数据，正式以产品说明书为准',
-      }))
+  const left = depositPanels.slice(0, 2)
+  const right = depositPanels.slice(2)
 
   return (
-    <Stage title={screenMeta.A.title} hint="预览 1920×1080 · 实物屏 3584×1408 · 无底栏、无屏内 logo、标题右置">
+    <Stage title={screenMeta.A.title} hint="预览 1920×1080 · 利率为需求PPT版式数字，资料包没有正式挂牌利率表">
       <div className="board board-a">
         <div className="a-head">
           <div>
@@ -57,7 +45,13 @@ export function ScreenA() {
         </div>
         <div className="a-grid">
           <div className="a-col">
-            {tab === 'third' ? (
+            {tab === 'wealth' ? (
+              <div className="glass rate-card">
+                <span className="chip warn">资料未提供</span>
+                <h3 className="title-cn" style={{ marginTop: 8 }}>自营理财清单</h3>
+                <p style={{ color: 'var(--muted)', fontSize: 13 }}>资料包没有产品表，这里不编造产品名称和业绩。</p>
+              </div>
+            ) : tab === 'third' ? (
               <div className="glass rate-card">
                 <span className="chip warn">待确认</span>
                 <h3 className="title-cn" style={{ marginTop: 8 }}>主题未定</h3>
@@ -66,12 +60,14 @@ export function ScreenA() {
             ) : left.map((p) => <RateCard key={p.title} {...p} />)}
           </div>
           <div className="media">
-            {tab === 'third' ? '版面三 · 主题待定' : '品牌影像 / 视频位'}
+            {tab === 'deposit' ? (
+              <img className="photo-fill" src={`${import.meta.env.BASE_URL}${realAssets.branches.dali}`} alt="大理市农商行营业部" />
+            ) : tab === 'wealth' ? '自营理财 · 待补产品表' : '版面三 · 主题待定'}
           </div>
           <div className="a-col">
-            {tab === 'third' ? (
-              <div className="glass rate-card"><h3 className="title-cn">字段占位</h3></div>
-            ) : right.map((p) => <RateCard key={p.title} {...p} />)}
+            {tab === 'deposit' ? right.map((p) => <RateCard key={p.title} {...p} />) : (
+              <div className="glass rate-card"><h3 className="title-cn">字段待资料</h3></div>
+            )}
           </div>
         </div>
         <div>

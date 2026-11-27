@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import { ChevronRight } from '../components/Icon'
-import { screenMeta } from '../data/content'
+import { realAssets, screenMeta } from '../data/content'
 
 const base = import.meta.env.BASE_URL
 
 const cards = [
-  { to: '/screen-a', key: 'A' as const, img: `${base}mockups/A-data.jpg`, desc: '存款利率、自营理财与版面三。标题右置。' },
-  { to: '/screen-b', key: 'B' as const, img: `${base}mockups/B-map.jpg`, desc: '云南沙盘与六大板块：网点、边境、帮扶与境外金融。' },
-  { to: '/screen-c', key: 'C' as const, img: `${base}mockups/C-positions.jpg`, desc: '三大定位入口，以及笑脸墙飘动与拼字。' },
-  { to: '/screen-d', key: 'D' as const, img: `${base}mockups/D-notice.jpg`, desc: '一楼电子屏公示目录，账户服务已拆为 5 页。' },
+  { to: '/screen-a', key: 'A' as const, img: `${base}${realAssets.branches.dali}`, desc: '存款利率版式。中部为大理市农商行营业部实拍门头。' },
+  { to: '/screen-b', key: 'B' as const, img: `${base}${realAssets.branches.hekou}`, desc: '六大板块。特色网点使用河口、独龙江、羊拉、蓬莱实拍。' },
+  { to: '/screen-c', key: 'C' as const, img: `${base}${realAssets.people[3].photo}`, desc: '三大定位，以及人员情况表 66 人实拍笑脸。' },
+  { to: '/screen-d', key: 'D' as const, img: `${base}${realAssets.branches.penglai}`, desc: '一楼电子屏公示目录，账户服务已拆为 5 页。' },
 ]
 
 export function Overview() {

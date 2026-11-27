@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Stage } from '../components/Stage'
 import {
   borderCounties,
+  povertyPhoto,
   borderSide,
   happyVillage,
   networkStats,
@@ -79,7 +80,7 @@ export function ScreenB() {
             <h2 className="title-cn">金融服务展示</h2>
             <p>{subtitle}</p>
           </div>
-          <span className="chip">示意图替代三维沙盘</span>
+          <span className="chip">{mod === 'specialty' ? '资料包实拍' : '示意图替代三维沙盘'}</span>
         </div>
 
         <div className="b-grid">
@@ -107,7 +108,12 @@ export function ScreenB() {
                 <span className="chip">{branch.tag}</span>
                 <h3 style={{ marginTop: 8 }}>{branch.name}</h3>
                 <p>{branch.text}</p>
-                {branch.id === 'dulong' ? <p>{povertyCase.title}：{povertyCase.paras[1]}</p> : null}
+                {branch.id === 'dulong' ? (
+                  <>
+                    <p>{povertyCase.title}：{povertyCase.paras[1]}</p>
+                    <img className="photo-fill" style={{ height: 140, marginTop: 8 }} src={`${import.meta.env.BASE_URL}${povertyPhoto}`} alt="独龙江减贫案例" />
+                  </>
+                ) : null}
               </div>
             )}
             {mod === 'border' && (
@@ -151,9 +157,13 @@ export function ScreenB() {
           </div>
 
           <div className="glass map-stage">
-            <img src="./maps/yunnan-map-sandtable.jpg" alt="云南沙盘示意图" />
-            <div className="veil" />
-            {Array.from({ length: 14 + level * 4 }).map((_, i) => (
+            {mod === 'specialty' ? (
+              <img src={`${import.meta.env.BASE_URL}${branch.photo}`} alt={branch.name} />
+            ) : (
+              <img src="./maps/yunnan-map-sandtable.jpg" alt="云南沙盘示意图" />
+            )}
+            {mod === 'specialty' ? null : <div className="veil" />}
+            {mod !== 'specialty' && Array.from({ length: 14 + level * 4 }).map((_, i) => (
               <span key={i} className="dot" style={{ left: `${16 + ((i * 37) % 68)}%`, top: `${22 + ((i * 29) % 54)}%`, width: 7, height: 7, opacity: i < 4 + level ? 1 : 0.35 }} />
             ))}
             {mod === 'border' && (
@@ -171,16 +181,15 @@ export function ScreenB() {
 
           <div className="b-side">
             {mod === 'specialty' ? (
-              <>
-                <div className="glass side-note" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {specialtyBranches.map((b) => (
-                    <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} onClick={() => setBranchId(b.id)}>
-                      {b.name.replace('市农商行营业部', '').replace('信用社', '')}
-                    </button>
-                  ))}
-                </div>
-                <div className="media">网点实拍主图</div>
-              </>
+              <div className="glass side-note" style={{ display: 'grid', gap: 8 }}>
+                <h3>实拍网点</h3>
+                {specialtyBranches.map((b) => (
+                  <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => setBranchId(b.id)}>
+                    {b.name.replace('市农商行营业部', '').replace('信用社', '')}
+                  </button>
+                ))}
+                <p>主图为资料包网点照片。独龙江另附全球减贫案例图。</p>
+              </div>
             ) : (
               <div className="glass side-note">
                 <h3>本侧展示</h3>
