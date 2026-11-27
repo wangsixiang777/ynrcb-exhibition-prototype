@@ -24,39 +24,90 @@ const modules: { id: Module; label: string }[] = [
   { id: 'overseas', label: '境外金融' },
 ]
 
-/** 昆明示意中心 */
-const HQ = { left: 52, top: 48 }
+/** 昆明 · 地图红点大致位置（object-fit: contain 下的舞台百分比） */
+const HQ = { left: 56.5, top: 47.5 }
 
-/** 边境县示意点位（非测绘；集中在沙盘中区，避开左右看板） */
-const borderPins = borderCounties.map((c, i) => {
-  const cols = 5
-  const col = i % cols
-  const row = Math.floor(i / cols)
-  return {
-    name: c.name,
-    n: c.n,
-    left: 38 + col * 6.2 + (row % 2) * 2.4,
-    top: 30 + row * 8.5 + (col % 2) * 1.6,
-  }
+/** 边境县：按滇西—滇南—滇东南边境走向排布（示意，非测绘） */
+const borderGeo: Record<string, { left: number; top: number }> = {
+  贡山: { left: 38.5, top: 30.5 },
+  福贡: { left: 39.2, top: 34.0 },
+  腾冲: { left: 40.0, top: 42.5 },
+  龙陵: { left: 41.2, top: 46.0 },
+  盈江: { left: 38.8, top: 45.5 },
+  陇川: { left: 38.2, top: 48.0 },
+  瑞丽: { left: 37.5, top: 50.0 },
+  '畹町/芒市相关': { left: 39.0, top: 49.2 },
+  镇康: { left: 40.5, top: 52.5 },
+  耿马: { left: 41.5, top: 55.0 },
+  沧源: { left: 42.0, top: 57.5 },
+  西盟: { left: 43.5, top: 60.0 },
+  孟连: { left: 44.0, top: 62.0 },
+  澜沧: { left: 45.5, top: 61.0 },
+  勐海: { left: 47.5, top: 66.5 },
+  景洪: { left: 50.5, top: 68.0 },
+  勐腊: { left: 53.5, top: 69.0 },
+  江城: { left: 54.5, top: 65.5 },
+  绿春: { left: 57.0, top: 64.0 },
+  金平: { left: 59.5, top: 65.5 },
+  河口: { left: 63.5, top: 66.5 },
+  元阳: { left: 58.5, top: 61.5 },
+  麻栗坡: { left: 65.0, top: 60.0 },
+  富宁: { left: 67.5, top: 56.5 },
+  其他边境县: { left: 61.0, top: 58.0 },
+}
+
+const borderPins = borderCounties.map((c) => {
+  const g = borderGeo[c.name] ?? { left: 52, top: 55 }
+  return { name: c.name, n: c.n, left: g.left, top: g.top }
 })
 
-function makeRadiationDots(level: number) {
-  const counts = [1, 8, 22, 48, 90]
-  const total = counts[Math.min(level, counts.length - 1)]
-  const dots: { left: number; top: number; star?: boolean }[] = []
+type RadDot = {
+  left: number
+  top: number
+  star?: boolean
+  hub?: boolean
+  /** 抛物线控制点抬升 */
+  lift: number
+  delay: number
+}
+
+/** 按层级生成辐射点：数量贴近清单比例抽样，轨迹从总行抛物线甩出 */
+function makeRadiationDots(level: number): RadDot[] {
+  // 视觉抽样：1 / 16 / ~40(对应114) / ~110(对应1578) / +星光分理处
+  const targets = [1, 16, 42, 118, 180]
+  const total = targets[Math.min(level, targets.length - 1)]
+  const dots: RadDot[] = []
   for (let i = 0; i < total; i += 1) {
-    const ring = Math.floor(i / 6) + (i === 0 ? 0 : 1)
-    const a = (i * 2.4 + ring * 0.35) % (Math.PI * 2)
-    const r = i === 0 ? 0 : 4 + ring * 5.2 + (i % 3) * 1.1
-    const left = HQ.left + Math.cos(a) * r
-    const top = HQ.top + Math.sin(a) * r * 0.78
+    if (i === 0) {
+      dots.push({ left: HQ.left, top: HQ.top, hub: true, lift: 0, delay: 0 })
+      continue
+    }
+    // 扇形覆盖云南主体：偏西—南—东，少朝东北空白
+    const sector = -0.15 + (i / total) * 1.55 + ((i * 17) % 7) * 0.04
+    const a = Math.PI * 0.15 + sector * Math.PI * 0.85
+    const ring = level <= 1 ? 1 : level === 2 ? 1 + (i % 3) : 1 + (i % 5)
+    const dist =
+      level === 1 ? 7 + (i % 5) * 1.8
+        : level === 2 ? 9 + ring * 3.2 + (i % 4)
+          : level === 3 ? 8 + ring * 4.1 + (i % 6) * 0.8
+            : 7 + ring * 4.6 + (i % 8) * 0.9
+    const left = HQ.left + Math.cos(a) * dist * 1.05
+    const top = HQ.top + Math.sin(a) * dist * 0.82
     dots.push({
-      left: Math.min(86, Math.max(14, left)),
-      top: Math.min(82, Math.max(18, top)),
-      star: level >= 4 && i > 40,
+      left: Math.min(72, Math.max(34, left)),
+      top: Math.min(74, Math.max(26, top)),
+      star: level >= 4 && i > 110,
+      lift: 6 + (dist / 4) + (i % 5),
+      delay: (i % 24) * 0.03,
     })
   }
   return dots
+}
+
+function parabolaPoint(from: { left: number; top: number }, to: RadDot, t: number) {
+  const x = from.left + (to.left - from.left) * t
+  const y = from.top + (to.top - from.top) * t - Math.sin(Math.PI * t) * to.lift
+  return { left: x, top: y }
 }
 
 const cosmosStars = Array.from({ length: 72 }, (_, i) => ({
@@ -79,6 +130,7 @@ export function ScreenB() {
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
   const [reformT, setReformT] = useState(0)
+  const [flyT, setFlyT] = useState(1)
   const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
   /** 宇宙星空 → 云南沙盘：intro 播放中 / done 已落地 */
   const [cosmosPhase, setCosmosPhase] = useState<'intro' | 'zoom' | 'done'>('intro')
@@ -144,18 +196,32 @@ export function ScreenB() {
         return
       }
       setLevel(i)
-    }, 900)
+    }, 1100)
     return () => window.clearInterval(timer)
   }, [autoLevel, mod])
+
+  /** 层级切换时：点位从总行沿抛物线甩出 */
+  useEffect(() => {
+    if (mod !== 'network' || reforming || cosmosPhase !== 'done') return
+    setFlyT(0)
+    let t = 0
+    const timer = window.setInterval(() => {
+      t += 1
+      setFlyT(Math.min(1, t / 14))
+      if (t >= 14) window.clearInterval(timer)
+    }, 32)
+    return () => window.clearInterval(timer)
+  }, [level, mod, reforming, cosmosPhase])
 
   useEffect(() => {
     if (!reforming || mod !== 'network') return
     setReformT(0)
+    setFlyT(1)
     let t = 0
     const timer = window.setInterval(() => {
       t += 1
       setReformT(t)
-      if (t >= 16) {
+      if (t >= 18) {
         window.clearInterval(timer)
         setReforming(false)
         setModal({
@@ -163,7 +229,7 @@ export function ScreenB() {
           body: '全省网点星光收束至昆明总行后弹出。改制介绍正文待提供。',
         })
       }
-    }, 120)
+    }, 110)
     return () => window.clearInterval(timer)
   }, [reforming, mod])
 
@@ -216,7 +282,7 @@ export function ScreenB() {
       <div className={`bleed sand-bleed is-bright${cosmosOn ? ' cosmos-on' : ''}`}>
         <img
           className={`bleed-bg${cosmosPhase === 'intro' ? ' is-far' : ''}${cosmosPhase === 'zoom' ? ' is-arrive' : ''}`}
-          src={`${base}maps/yunnan-map-official.jpg`}
+          src={`${base}maps/yunnan-map-official.png`}
           alt=""
         />
         <div className="bleed-wash sand-wash-bright" />
@@ -242,23 +308,42 @@ export function ScreenB() {
         )}
 
         <div className="sand-stage">
-          {mod === 'network' && cosmosPhase === 'done' && radiationDots.map((d, i) => {
-            const converge = reforming ? reformT / 16 : 0
-            const left = d.left + (HQ.left - d.left) * converge
-            const top = d.top + (HQ.top - d.top) * converge
-            return (
-              <span
-                key={i}
-                className={d.star ? 'sand-dot star' : i === 0 ? 'sand-dot hub' : 'sand-dot'}
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                  opacity: reforming ? 0.35 + (1 - converge) * 0.65 : 1,
-                  transition: reforming ? 'left 0.12s linear, top 0.12s linear, opacity 0.12s linear' : 'opacity 0.35s ease',
-                }}
-              />
-            )
-          })}
+          {mod === 'network' && cosmosPhase === 'done' && (
+            <>
+              <svg className="rad-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                {radiationDots.filter((d) => !d.hub && !d.star).slice(0, level >= 3 ? 36 : level >= 2 ? 22 : 12).map((d, i) => {
+                  const midX = (HQ.left + d.left) / 2
+                  const midY = (HQ.top + d.top) / 2 - d.lift * 0.55
+                  return (
+                    <path
+                      key={i}
+                      className="rad-arc"
+                      d={`M ${HQ.left} ${HQ.top} Q ${midX} ${midY} ${d.left} ${d.top}`}
+                      style={{ opacity: 0.18 + flyT * 0.35, transitionDelay: `${d.delay}s` }}
+                    />
+                  )
+                })}
+              </svg>
+              {radiationDots.map((d, i) => {
+                const converge = reforming ? reformT / 18 : 0
+                const fly = reforming ? 1 : flyT
+                const along = parabolaPoint(HQ, d, Math.min(1, fly + d.delay * 0.15))
+                const left = along.left + (HQ.left - along.left) * converge
+                const top = along.top + (HQ.top - along.top) * converge
+                return (
+                  <span
+                    key={i}
+                    className={d.star ? 'sand-dot star' : d.hub ? 'sand-dot hub' : 'sand-dot'}
+                    style={{
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      opacity: reforming ? 0.3 + (1 - converge) * 0.7 : 0.35 + fly * 0.65,
+                    }}
+                  />
+                )
+              })}
+            </>
+          )}
 
           {mod === 'specialty' && specialtyBranches.map((b) => (
             <button
@@ -461,7 +546,7 @@ export function ScreenB() {
               <div className="glass-card">
                 <p className="glass-kicker">二级按钮 · 层级点亮</p>
                 <h3>当前：{networkStats.levels[level].name}</h3>
-                <p className="viz-note">总行向外辐射；分理处以星光示意。数量来自网点清单。</p>
+                <p className="viz-note">从昆明总行沿抛物线向外辐射；沙盘点位为层级抽样示意（中心支行 16、一级支行抽 42、支行抽 118），分理处以星光示意。清单全量见右侧数字。</p>
                 <div className="level-btns">
                   {levelBars.map((item, idx) => (
                     <button

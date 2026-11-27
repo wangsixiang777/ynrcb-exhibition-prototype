@@ -93,7 +93,7 @@ export const specialtyBranches = [
     name: '大理市农商行营业部',
     short: '大理营业部',
     tag: '百佳示范',
-    pin: { left: '44%', top: '46%' },
+    pin: { left: '45%', top: '43%' },
     text: '全国银行业文明规范服务百佳示范单位，西部地区首家获评百佳的农信网点。以“耕耘苍洱，信守乡愁”为文化内核。',
     facts: [
       { k: '荣誉', v: '全国银行业文明规范服务百佳示范单位' },
@@ -108,7 +108,7 @@ export const specialtyBranches = [
     name: '怒江农商行贡山独龙江支行',
     short: '独龙江',
     tag: '减贫案例',
-    pin: { left: '34%', top: '34%' },
+    pin: { left: '38%', top: '31%' },
     text: '全国唯一独龙族聚居乡内仅有的实体金融网点。汉语、独龙语双语，整族授信，服务草果、独龙牛等产业。',
     facts: [
       { k: '定位', v: '全国唯一独龙族聚居乡内仅有的实体金融网点' },
@@ -129,7 +129,7 @@ export const specialtyBranches = [
     name: '河口农商行营业部',
     short: '河口',
     tag: '海拔最低',
-    pin: { left: '60%', top: '66%' },
+    pin: { left: '63.5%', top: '66%' },
     text: '地处云南海拔最低的河谷国门，紧邻河口口岸，服务边民互市、跨境商贸和口岸物流。',
     facts: [
       { k: '区位', v: '云南海拔最低的河谷国门' },
@@ -144,7 +144,7 @@ export const specialtyBranches = [
     name: '蓬莱信用社',
     short: '蓬莱',
     tag: '云南第一家',
-    pin: { left: '52%', top: '52%' },
+    pin: { left: '58%', top: '49%' },
     text: '1952年成立，是云南省第一家信用合作社，云南农信的星星之火。',
     facts: [
       { k: '时间', v: '1952年' },
@@ -159,7 +159,7 @@ export const specialtyBranches = [
     name: '迪庆农商行德钦羊拉支行',
     short: '羊拉',
     tag: '海拔最高',
-    pin: { left: '48%', top: '28%' },
+    pin: { left: '47%', top: '27%' },
     text: '坐落于云南北极、滇川藏交界羊拉乡，是全省海拔最高的农信营业网点。',
     facts: [
       { k: '区位', v: '云南北极，滇川藏交界羊拉乡' },
