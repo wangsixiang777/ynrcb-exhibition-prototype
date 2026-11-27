@@ -162,7 +162,7 @@ export function ScreenB() {
     }
   }, [cosmosKey])
 
-  /** 边境县 / 幸福村：每秒一县跑马灯；幸福村弹窗常驻不消失 */
+  /** 边境县 / 幸福村：每秒一县依次弹出，已出现的数量弹窗不消失 */
   useEffect(() => {
     if (mod !== 'border' && mod !== 'happy') {
       setBorderIdx(-1)
@@ -172,12 +172,8 @@ export function ScreenB() {
     setLitCounties([])
     setBorderIdx(-1)
     let i = 0
-    const persistPop = mod === 'happy'
     const tick = () => {
-      if (i >= borderCounties.length) {
-        i = 0
-        if (!persistPop) setLitCounties([])
-      }
+      if (i >= borderCounties.length) i = 0
       const cur = i
       setBorderIdx(cur)
       setLitCounties((prev) => (prev.includes(cur) ? prev : [...prev, cur]))
@@ -395,8 +391,7 @@ export function ScreenB() {
                 {borderPins.map((p, i) => {
                   const lit = litCounties.includes(i)
                   const hot = borderIdx === i
-                  const showPop = mod === 'happy' ? lit : hot
-                  if (!showPop) return null
+                  if (!lit) return null
                   return (
                     <div
                       key={`pop-${p.name}`}
