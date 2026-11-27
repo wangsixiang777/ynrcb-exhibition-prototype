@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Stage } from '../components/Stage'
-import { CompareBars, FlowBoard, HBars, MetricTiles } from '../components/VizBits'
+import { FlowBoard, HBars, MetricTiles } from '../components/VizBits'
 import {
   borderCounties,
   povertyPhoto,
@@ -519,39 +519,20 @@ export function ScreenB() {
           )}
 
           {mod === 'revitalize' && (
-            <>
-              <div className="glass-card glass-hero">
-                <p className="glass-kicker">板块五 · 帮扶成效</p>
-                <MetricTiles
-                  items={[
-                    { label: '国家帮扶贷款', value: '1200亿+' },
-                    { label: '脱贫小额信贷', value: '97%', tip: '全省投放占比' },
-                    { label: '建档农户', value: '941万', tip: '建档面 95%' },
-                  ]}
-                />
+            <div className="glass-card">
+              <p className="glass-kicker">二级按钮</p>
+              <h3>帮扶层级</h3>
+              <div className="level-btns">
+                <button type="button" className={revType === 'national' ? 'is-on' : undefined} onClick={() => setRevType('national')}>
+                  <span>国家级帮扶县</span>
+                  <strong className="num">{revitalization.national.counties}</strong>
+                </button>
+                <button type="button" className={revType === 'provincial' ? 'is-on' : undefined} onClick={() => setRevType('provincial')}>
+                  <span>省级帮扶县</span>
+                  <strong className="num">{revitalization.provincial.counties}</strong>
+                </button>
               </div>
-              <div className="glass-card">
-                <h3>国家 / 省级对比</h3>
-                <CompareBars
-                  rows={[
-                    {
-                      label: '县数',
-                      a: revitalization.national.counties,
-                      b: revitalization.provincial.counties,
-                      aLab: `${revitalization.national.counties}`,
-                      bLab: `${revitalization.provincial.counties}`,
-                    },
-                    {
-                      label: '网点',
-                      a: revitalization.national.branches,
-                      b: revitalization.provincial.branches,
-                      aLab: `${revitalization.national.branches}`,
-                      bLab: `${revitalization.provincial.branches}`,
-                    },
-                  ]}
-                />
-              </div>
-            </>
+            </div>
           )}
 
           {mod === 'overseas' && (
@@ -659,24 +640,45 @@ export function ScreenB() {
           )}
 
           {mod === 'revitalize' && (
-            <div className="glass-card">
-              <p className="glass-kicker">二级按钮</p>
-              <div className="seg wide">
-                <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级帮扶县</button>
-                <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级帮扶县</button>
-              </div>
-              <div className="viz-stack">
-                <div className="viz-stack-item">
-                  <span>{revType === 'national' ? '国家重点帮扶县' : '省级帮扶县'}</span>
-                  <strong className="num">{revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}</strong>
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块五 · 当前层级</p>
+                <h3>{revType === 'national' ? '国家级帮扶县' : '省级帮扶县'}</h3>
+                <div className="glass-kpi-row">
+                  <div>
+                    <span>县数</span>
+                    <strong className="num">{revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}</strong>
+                  </div>
+                  <div>
+                    <span>网点</span>
+                    <strong className="num">{revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}</strong>
+                  </div>
                 </div>
-                <div className="viz-stack-item">
+                <div className="rev-facts">
+                  {(revType === 'national' ? revitalization.national.facts : revitalization.provincial.facts).map((item) => (
+                    <div key={item.label} className="rev-fact">
+                      <span>{item.label}</span>
+                      <strong className="num">{item.value}</strong>
+                      <em>{item.note}</em>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="glass-card">
+                <h3>国家 / 省级对比</h3>
+                <div className="rev-table">
+                  <span />
+                  <b className={revType === 'national' ? 'is-on' : undefined}>国家级</b>
+                  <b className={revType === 'provincial' ? 'is-on' : undefined}>省级</b>
+                  <span>县数</span>
+                  <strong className={revType === 'national' ? 'is-on' : undefined}>{revitalization.national.counties}</strong>
+                  <strong className={revType === 'provincial' ? 'is-on' : undefined}>{revitalization.provincial.counties}</strong>
                   <span>网点</span>
-                  <strong className="num">{revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}</strong>
+                  <strong className={revType === 'national' ? 'is-on' : undefined}>{revitalization.national.branches}</strong>
+                  <strong className={revType === 'provincial' ? 'is-on' : undefined}>{revitalization.provincial.branches}</strong>
                 </div>
               </div>
-              <p className="viz-lead">{revType === 'national' ? revitalization.national.tip : revitalization.provincial.tip}</p>
-            </div>
+            </>
           )}
 
           {mod === 'overseas' && (

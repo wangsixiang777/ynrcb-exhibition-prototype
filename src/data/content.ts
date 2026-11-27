@@ -259,8 +259,19 @@ export const happyVillage = {
 }
 
 export const revitalization = {
-  national: { counties: 27, branches: 487, tip: '国家重点帮扶县贷款余额超1200亿元' },
-  provincial: { counties: 39, branches: 534, tip: '投放全省97%脱贫人口小额信贷；建档农户941万户，建档面95%' },
+  national: {
+    counties: 27,
+    branches: 487,
+    facts: [{ label: '贷款余额', value: '1200亿+', note: '国家重点帮扶县' }],
+  },
+  provincial: {
+    counties: 39,
+    branches: 534,
+    facts: [
+      { label: '脱贫小额信贷', value: '97%', note: '全省投放占比' },
+      { label: '建档农户', value: '941万', note: '建档面 95%' },
+    ],
+  },
 }
 
 export const overseas = [
