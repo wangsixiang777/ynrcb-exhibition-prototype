@@ -132,8 +132,6 @@ export function ScreenB() {
   const [litCounties, setLitCounties] = useState<number[]>([])
   const [revType, setRevType] = useState<'national' | 'provincial'>('national')
   const [modal, setModal] = useState<null | { title: string; body: string }>(null)
-  const [playing, setPlaying] = useState(false)
-  const [borderPlayKey, setBorderPlayKey] = useState(0)
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
   const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
@@ -164,29 +162,30 @@ export function ScreenB() {
     }
   }, [cosmosKey])
 
-  /** 进入边境县 / 重播：沙盘自动跑马灯，依次高亮 25 县 */
+  /** 边境县：每秒一县自动跑马灯，跑完清零循环 */
   useEffect(() => {
     if (mod !== 'border') {
-      setPlaying(false)
+      setBorderIdx(-1)
+      setLitCounties([])
       return
     }
-    setPlaying(true)
     setLitCounties([])
     setBorderIdx(-1)
     let i = 0
-    const timer = window.setInterval(() => {
-      const item = borderCounties[i]
-      if (!item) {
-        window.clearInterval(timer)
-        setPlaying(false)
-        return
+    const tick = () => {
+      if (i >= borderCounties.length) {
+        i = 0
+        setLitCounties([])
       }
-      setBorderIdx(i)
-      setLitCounties((prev) => [...prev, i])
+      const cur = i
+      setBorderIdx(cur)
+      setLitCounties((prev) => (prev.includes(cur) ? prev : [...prev, cur]))
       i += 1
-    }, 700)
+    }
+    tick()
+    const timer = window.setInterval(tick, 1000)
     return () => window.clearInterval(timer)
-  }, [mod, borderPlayKey])
+  }, [mod])
 
   useEffect(() => {
     if (!autoLevel || mod !== 'network') return
@@ -238,13 +237,6 @@ export function ScreenB() {
         label: c.name.replace('/芒市相关', ''),
         value: c.n,
         active: borderCounties[borderIdx]?.name === c.name,
-        onClick: playing ? undefined : () => {
-          const idx = borderCounties.findIndex((x) => x.name === c.name)
-          if (idx >= 0) {
-            setBorderIdx(idx)
-            setLitCounties((prev) => (prev.includes(idx) ? prev : [...prev, idx]))
-          }
-        },
       })),
     [borderIdx],
   )
@@ -255,7 +247,6 @@ export function ScreenB() {
   const switchMod = (id: Module) => {
     setMod(id)
     setModal(null)
-    setPlaying(false)
     setAutoLevel(false)
     setReforming(false)
   }
@@ -486,6 +477,7 @@ export function ScreenB() {
                   <div><span>边境县</span><strong className="num">{borderSide.counties}</strong></div>
                   <div><span>边境网点</span><strong className="num">约{borderSide.branches}</strong></div>
                 </div>
+                <p className="viz-miss" style={{ marginTop: 8 }}>{borderSide.missing}</p>
               </div>
               <div className="glass-card">
                 <h3>跨境结算</h3>
@@ -499,7 +491,6 @@ export function ScreenB() {
                     { label: '结算单', value: '21.76万', tip: '17.17亿元' },
                   ]}
                 />
-                <p className="viz-miss">{borderSide.missing}</p>
               </div>
             </>
           )}
@@ -630,31 +621,12 @@ export function ScreenB() {
           {mod === 'border' && (
             <>
               <div className="glass-card">
-                <p className="glass-kicker">沙盘跑马灯</p>
-                <h3>{playing ? '依次高亮边境县' : '25 县已点亮完毕'}</h3>
-                <p className="viz-note">
-                  沙盘上依次高亮选中边境县；仅当前选中县显示网点数弹窗，切到下一县后上一弹窗收起。已点亮的县保留高亮点。
-                </p>
-                <div className="glass-kpi-row">
-                  <div><span>已高亮</span><strong className="num">{litCounties.length}<em>/25</em></strong></div>
-                  <div><span>当前县</span><strong className="num" style={{ fontSize: 18 }}>
-                    {borderCounties[borderIdx]?.name.replace('/芒市相关', '') || '—'}
-                  </strong></div>
-                </div>
-                {!playing && litCounties.length >= borderCounties.length ? (
-                  <button
-                    type="button"
-                    className="viz-cta ghost"
-                    style={{ marginTop: 10 }}
-                    onClick={() => setBorderPlayKey((k) => k + 1)}
-                  >
-                    重新播放跑马灯
-                  </button>
-                ) : null}
-              </div>
-              <div className="glass-card">
                 <h3>分县网点 · Top8</h3>
                 <HBars items={borderBars.slice(0, 8)} />
+              </div>
+              <div className="glass-card">
+                <p className="glass-kicker">边民互市</p>
+                <p className="viz-lead">{borderSide.mutual}</p>
               </div>
             </>
           )}
@@ -664,7 +636,7 @@ export function ScreenB() {
               <p className="glass-kicker">沙盘说明</p>
               <h3>边境县亮起示意</h3>
               <p className="viz-lead">需求写明与边境县类似的跑马灯（地图依次高亮）。资料仅有幸福村网点 126、贷款余额 264.42 亿元；民族系列产品无分项表。</p>
-              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>切到边境县看沙盘跑马灯</button>
+              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>切到边境县看沙盘</button>
             </div>
           )}
 
