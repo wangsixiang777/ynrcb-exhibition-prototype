@@ -165,15 +165,18 @@ export const borderSide = {
   branches: 368,
   settlement: '沿边跨境结算累计超638亿元',
   usd: '结算规模8.8亿美元',
-  ports: '磨憨、勐满、关累等口岸示例数据',
-  note: '覆盖人群等指标允许暂编，需甲方终核',
-  mutual: '20个边民互市点上线贸易新业态综合服务系统',
+  portsNamed: '磨憨、勐满、关累 3 个口岸',
+  signedResidents: '签约边民 3192 人',
+  merchants: '境内外商家 419 家',
+  orders: '累计结算 21.76 万单，总额 17.17 亿元',
+  mutual: '天保、畹町、河口、磨憨等 20 个边民互市点已上线贸易新业态综合服务系统',
+  missing: '边境线长度、覆盖人群：需求列了字段，资料没有数字，不暂编',
 }
 
 export const happyVillage = {
-  total: 126,
+  outlets: 126,
   loan: '264.42亿元',
-  note: '民族系列信贷产品细分数据待补',
+  missing: '幸福村总数、覆盖人数：需求列了字段，清单只给了营业网点 126 个。民族系列产品没有分项表。',
 }
 
 export const revitalization = {

@@ -72,20 +72,25 @@ export function ScreenB() {
   ].filter(Boolean).join(' · ')
 
   const base = import.meta.env.BASE_URL
-  const bg = mod === 'specialty' ? `${base}${branch.photo}` : './maps/yunnan-map-sandtable.jpg'
 
   return (
     <Stage tone="viz">
       <div className="bleed">
-        <img className="bleed-bg" src={bg} alt="" />
-        <div className="bleed-wash" />
-        {mod !== 'specialty' && (
-          <div className="bleed-dots">
-            {Array.from({ length: 14 + level * 4 }).map((_, i) => (
-              <span key={i} className="dot" style={{ left: `${18 + ((i * 37) % 64)}%`, top: `${24 + ((i * 29) % 52)}%`, opacity: i < 4 + level ? 1 : 0.35 }} />
-            ))}
-          </div>
-        )}
+        <img className="bleed-bg" src={`${base}hall/exhibition-hall.jpg`} alt="" />
+        <div className="bleed-wash is-soft" />
+        <div className="stage-well">
+          <img className="stage-map" src="./maps/yunnan-map-sandtable.jpg" alt="云南沙盘示意图" />
+          {mod !== 'specialty' && Array.from({ length: 10 + level * 6 }).map((_, i) => (
+            <span key={i} className="dot" style={{ left: `${22 + ((i * 37) % 56)}%`, top: `${28 + ((i * 29) % 46)}%`, opacity: i < 3 + level ? 1 : 0.4 }} />
+          ))}
+          {mod === 'overseas' && (
+            <div className="stage-dirs">
+              <span>越南</span>
+              <span>老挝</span>
+              <span>缅甸</span>
+            </div>
+          )}
+        </div>
 
         <aside className="bleed-side bleed-left">
           {mod === 'network' && (
@@ -112,16 +117,20 @@ export function ScreenB() {
               <div className="gold-card">
                 <p>{borderSide.settlement}</p>
                 <p>{borderSide.usd}</p>
+                <p>{borderSide.portsNamed}</p>
+                <p>{borderSide.signedResidents}</p>
+                <p>{borderSide.merchants}</p>
+                <p>{borderSide.orders}</p>
                 <p>{borderSide.mutual}</p>
-                <span className="chip warn">{borderSide.note}</span>
+                <span className="chip warn">{borderSide.missing}</span>
               </div>
             </>
           )}
           {mod === 'happy' && (
             <>
-              <Stat label="幸福村网点" value={`${happyVillage.total}`} unit="个" />
+              <Stat label="幸福村网点" value={`${happyVillage.outlets}`} unit="个" />
               <Stat label="贷款余额" value={happyVillage.loan} />
-              <div className="gold-card"><p>{happyVillage.note}</p></div>
+              <div className="gold-card"><p>{happyVillage.missing}</p></div>
             </>
           )}
           {mod === 'revitalize' && (
@@ -159,15 +168,16 @@ export function ScreenB() {
           )}
           {mod === 'specialty' && (
             <div className="gold-card">
-              <h3>五个特色网点</h3>
+              <h3>右侧实拍</h3>
+              <img className="photo-fill" style={{ height: 168, marginTop: 8 }} src={`${base}${branch.photo}`} alt={branch.name} />
+              {branch.id === 'dulong' ? (
+                <img className="photo-fill" style={{ height: 110, marginTop: 8 }} src={`${base}${povertyPhoto}`} alt="独龙江减贫案例" />
+              ) : null}
               {specialtyBranches.map((b) => (
                 <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} style={{ width: '100%', marginTop: 6, justifyContent: 'flex-start' }} onClick={() => setBranchId(b.id)}>
                   {b.name}
                 </button>
               ))}
-              {branch.id === 'dulong' ? (
-                <img className="photo-fill" style={{ height: 120, marginTop: 8 }} src={`${base}${povertyPhoto}`} alt="独龙江减贫案例" />
-              ) : null}
             </div>
           )}
           {mod === 'border' && (
@@ -205,7 +215,7 @@ export function ScreenB() {
 
         {mod === 'border' && popups.length > 0 && (
           <div className="bleed-popups">
-            {popups.slice(-4).map((p) => (
+            {popups.map((p) => (
               <div key={p.name} className="popup"><div>{p.name}</div><div className="num">{p.n} 个</div></div>
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Stage } from '../components/Stage'
-import { depositPanels, realAssets } from '../data/content'
+import { depositPanels } from '../data/content'
 
 type Tab = 'deposit' | 'wealth' | 'third'
 
@@ -37,8 +37,9 @@ export function ScreenA() {
   return (
     <Stage tone="viz">
       <div className="bleed">
-        <img className="bleed-bg" src={`${base}${realAssets.branches.dali}`} alt="" />
-        <div className="bleed-wash" />
+        <img className="bleed-bg" src={`${base}hall/exhibition-hall.jpg`} alt="" />
+        <div className="bleed-wash is-soft" />
+        <h2 className="bleed-title">{tab === 'deposit' ? '存款利率' : tab === 'wealth' ? '自营理财' : '版面三'}</h2>
         {tab === 'deposit' ? (
           <>
             <aside className="bleed-side bleed-left">

@@ -444,10 +444,47 @@ img { max-width: 100%; display: block; }
 .bleed-wash {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(90deg, rgba(255, 236, 196, 0.78) 0%, rgba(255, 236, 196, 0.08) 30%, rgba(255, 236, 196, 0.08) 70%, rgba(255, 236, 196, 0.78) 100%),
-    linear-gradient(180deg, rgba(255, 214, 140, 0.16), transparent 28%, transparent 72%, rgba(255, 220, 150, 0.18));
+  background: linear-gradient(90deg, rgba(255, 244, 220, 0.42) 0%, rgba(255, 244, 220, 0.05) 24%, rgba(255, 244, 220, 0.05) 76%, rgba(255, 244, 220, 0.42) 100%);
 }
+.bleed-wash.is-soft { background: linear-gradient(90deg, rgba(255, 248, 230, 0.28), transparent 22%, transparent 78%, rgba(255, 248, 230, 0.28)); }
+.bleed-title {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 3;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 650;
+  color: #9a3412;
+}
+.stage-well {
+  position: absolute;
+  left: 21%;
+  right: 21%;
+  top: 8%;
+  bottom: 14%;
+  z-index: 1;
+}
+.stage-map {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 24px rgba(120, 60, 10, 0.25));
+}
+.stage-well .dot { position: absolute; width: 8px; height: 8px; }
+.stage-dirs {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 650;
+  color: #9a3412;
+}
+.stage-dirs span { padding: 4px 10px; border-radius: 999px; background: rgba(255, 248, 230, 0.88); }
 .bleed-side {
   position: absolute;
   top: 16px;
@@ -485,7 +522,8 @@ img { max-width: 100%; display: block; }
 .bleed-note p { margin: 0; font-size: 14px; line-height: 1.65; }
 .bleed-caption { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 2; margin: 0; padding: 4px 12px; border-radius: 999px; background: rgba(255, 248, 230, 0.88); color: #8a4e16; font-size: 12px; }
 .bleed-dots { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.bleed-popups { position: absolute; right: 308px; top: 48px; z-index: 3; display: grid; gap: 6px; }
+.bleed-popups { position: absolute; right: 308px; top: 56px; z-index: 3; display: grid; gap: 6px; max-height: 52%; overflow: auto; }
+.bleed:has(.bleed-title) .bleed-right { top: 56px; }
 .county-list { max-height: 320px; overflow: auto; }
 .county-list div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(180, 120, 40, 0.16); font-size: 12px; }
 .county-list .on { color: #c4161c; font-weight: 700; }
