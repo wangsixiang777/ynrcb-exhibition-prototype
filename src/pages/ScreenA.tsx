@@ -20,6 +20,7 @@ function RateTable({ title, rows }: { title: string; rows: { term: string; rate:
           ))}
         </tbody>
       </table>
+      <p>{insure}</p>
     </section>
   )
 }
@@ -41,7 +42,6 @@ export function ScreenA() {
           <aside className="hall-col">
             <RateTable title={demand.title} rows={demand.rows} />
             <RateTable title={term.title} rows={term.rows} />
-            <p className="hall-insure">{insure}</p>
           </aside>
           <section className="hall-center">
             {wealthProducts.map((item) => (
@@ -61,7 +61,6 @@ export function ScreenA() {
             <RateTable title={agreement.title} rows={agreement.rows} />
             <RateTable title={notice.title} rows={notice.rows} />
             <RateTable title={structured.title} rows={structured.rows} />
-            <p className="hall-insure">{insure}</p>
           </aside>
         </div>
       </div>
