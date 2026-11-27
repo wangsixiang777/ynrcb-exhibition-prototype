@@ -482,11 +482,30 @@ img { max-width: 100%; display: block; }
   overflow: visible;
   pointer-events: none;
 }
-.rad-arc {
+.rad-arc,
+.rad-arc-base {
   fill: none;
-  stroke: rgba(232, 93, 28, 0.45);
-  stroke-width: 0.22;
+  stroke: rgba(232, 93, 28, 0.28);
+  stroke-width: 0.18;
   stroke-linecap: round;
+}
+.flow-bead {
+  fill: rgba(255, 196, 96, 0.75);
+  filter: drop-shadow(0 0 0.35px rgba(255, 180, 60, 0.9));
+}
+.flow-bead.head {
+  fill: #fff6d8;
+  filter: drop-shadow(0 0 1.2px rgba(255, 230, 140, 1));
+}
+.ripple-ring {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(232, 93, 28, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 200, 120, 0.2), inset 0 0 18px rgba(255, 180, 80, 0.12);
+  pointer-events: none;
+  opacity: 0.75;
+  transition: width 40ms linear, height 40ms linear, opacity 0.2s ease;
 }
 .sand-stage .map-pin { pointer-events: auto; }
 .sand-stage .county-pin { pointer-events: none; }
@@ -498,6 +517,7 @@ img { max-width: 100%; display: block; }
   background: #e85d1c;
   box-shadow: 0 0 0 4px rgba(232, 93, 28, 0.22), 0 0 10px rgba(232, 93, 28, 0.55);
   transform: translate(-50%, -50%);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 .sand-dot.hub {
   width: 14px;
@@ -1037,24 +1057,49 @@ img { max-width: 100%; display: block; }
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, #1a1040 0%, #07061a 55%, #02010a 100%);
+  background: radial-gradient(ellipse at 50% 42%, #1c1248 0%, #0a081f 48%, #02010a 100%);
   transition: opacity 1.2s ease, background 1.2s ease;
+  overflow: hidden;
 }
 .cosmos-layer.phase-zoom {
-  background: radial-gradient(ellipse at 50% 45%, rgba(40, 24, 70, 0.35) 0%, rgba(20, 12, 40, 0.18) 50%, transparent 78%);
-  opacity: 0.55;
+  background: radial-gradient(ellipse at 50% 45%, rgba(40, 24, 70, 0.28) 0%, rgba(20, 12, 40, 0.12) 50%, transparent 78%);
+  opacity: 0.5;
 }
-.cosmos-layer.phase-zoom .cosmos-star { opacity: 0.15; }
+.cosmos-layer.phase-zoom .cosmos-star,
+.cosmos-layer.phase-zoom .cosmos-shot,
+.cosmos-layer.phase-zoom .cosmos-nebula { opacity: 0.12; }
 .cosmos-layer.phase-zoom .cosmos-caption { opacity: 0; }
+.cosmos-nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.55;
+  animation: cosmosNebula 4s ease-in-out infinite;
+}
+.cosmos-nebula.n1 {
+  left: 28%;
+  top: 30%;
+  width: 42%;
+  height: 34%;
+  background: radial-gradient(circle, rgba(120, 80, 200, 0.45), transparent 70%);
+}
+.cosmos-nebula.n2 {
+  right: 18%;
+  top: 42%;
+  width: 36%;
+  height: 30%;
+  background: radial-gradient(circle, rgba(60, 100, 180, 0.4), transparent 70%);
+  animation-delay: 1.2s;
+}
 .cosmos-glow {
   position: absolute;
   left: 50%;
   top: 46%;
-  width: 280px;
-  height: 280px;
+  width: 300px;
+  height: 300px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 200, 120, 0.35), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 200, 120, 0.38), transparent 70%);
   animation: cosmosPulse 2.4s ease-in-out infinite;
 }
 .cosmos-star {
@@ -1063,6 +1108,16 @@ img { max-width: 100%; display: block; }
   background: #fff8e8;
   box-shadow: 0 0 6px rgba(255, 240, 200, 0.9);
   animation: cosmosTwinkle 2.2s ease-in-out infinite;
+}
+.cosmos-shot {
+  position: absolute;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 248, 220, 0.95) 55%, transparent);
+  transform: rotate(-28deg);
+  opacity: 0;
+  animation: cosmosShot 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(255, 230, 180, 0.8));
 }
 .cosmos-caption {
   position: absolute;
@@ -1098,12 +1153,22 @@ img { max-width: 100%; display: block; }
   transition: opacity 0.6s ease;
 }
 @keyframes cosmosTwinkle {
-  0%, 100% { opacity: 0.35; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1.15); }
+  0%, 100% { opacity: 0.32; transform: translateX(0) scale(0.85); }
+  50% { opacity: 1; transform: translateX(var(--drift, 0px)) scale(1.15); }
 }
 @keyframes cosmosPulse {
   0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.92); }
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+@keyframes cosmosNebula {
+  0%, 100% { opacity: 0.4; transform: scale(0.96); }
+  50% { opacity: 0.7; transform: scale(1.06); }
+}
+@keyframes cosmosShot {
+  0%, 12% { opacity: 0; transform: rotate(-28deg) translateX(-20px); }
+  22% { opacity: 1; }
+  48% { opacity: 0; transform: rotate(-28deg) translateX(160px); }
+  100% { opacity: 0; transform: rotate(-28deg) translateX(160px); }
 }
 .bleed .stat { background: rgba(255, 248, 230, 0.9); border: 1px solid rgba(212, 160, 70, 0.4); box-shadow: none; }
 .bleed .stat span { color: #8a5a30; }

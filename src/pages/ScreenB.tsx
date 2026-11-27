@@ -64,57 +64,75 @@ const borderPins = borderCounties.map((c) => {
 type RadDot = {
   left: number
   top: number
+  dist: number
   star?: boolean
   hub?: boolean
-  /** 抛物线控制点抬升 */
+  /** 中心支行抛物线抬升 */
   lift: number
-  delay: number
+  centerBranch?: boolean
 }
 
-/** 按层级生成辐射点：数量贴近清单比例抽样，轨迹从总行抛物线甩出 */
+/** 涟漪辐射点：由近到远依次显现；仅中心支行带抛物线 */
 function makeRadiationDots(level: number): RadDot[] {
-  // 视觉抽样：1 / 16 / ~40(对应114) / ~110(对应1578) / +星光分理处
-  const targets = [1, 16, 42, 118, 180]
+  const targets = [1, 17, 48, 130, 200] // 含总行：1 / 1+16 / +一级抽 / +支行抽 / +分理处星光
   const total = targets[Math.min(level, targets.length - 1)]
   const dots: RadDot[] = []
   for (let i = 0; i < total; i += 1) {
     if (i === 0) {
-      dots.push({ left: HQ.left, top: HQ.top, hub: true, lift: 0, delay: 0 })
+      dots.push({ left: HQ.left, top: HQ.top, dist: 0, hub: true, lift: 0 })
       continue
     }
-    // 扇形覆盖云南主体：偏西—南—东，少朝东北空白
-    const sector = -0.15 + (i / total) * 1.55 + ((i * 17) % 7) * 0.04
-    const a = Math.PI * 0.15 + sector * Math.PI * 0.85
-    const ring = level <= 1 ? 1 : level === 2 ? 1 + (i % 3) : 1 + (i % 5)
-    const dist =
-      level === 1 ? 7 + (i % 5) * 1.8
-        : level === 2 ? 9 + ring * 3.2 + (i % 4)
-          : level === 3 ? 8 + ring * 4.1 + (i % 6) * 0.8
-            : 7 + ring * 4.6 + (i % 8) * 0.9
-    const left = HQ.left + Math.cos(a) * dist * 1.05
-    const top = HQ.top + Math.sin(a) * dist * 0.82
+    const isCenter = i <= 16
+    const sector = (i * 2.399) % (Math.PI * 2)
+    const a = -Math.PI * 0.55 + (sector / (Math.PI * 2)) * Math.PI * 1.7
+    const dist = isCenter
+      ? 8 + (i % 5) * 1.6 + (i % 3)
+      : 10 + ((i - 16) % 6) * 2.2 + Math.floor((i - 16) / 8) * 3.4
+    const left = Math.min(72, Math.max(34, HQ.left + Math.cos(a) * dist * 1.02))
+    const top = Math.min(74, Math.max(26, HQ.top + Math.sin(a) * dist * 0.8))
+    const realDist = Math.hypot(left - HQ.left, top - HQ.top)
     dots.push({
-      left: Math.min(72, Math.max(34, left)),
-      top: Math.min(74, Math.max(26, top)),
-      star: level >= 4 && i > 110,
-      lift: 6 + (dist / 4) + (i % 5),
-      delay: (i % 24) * 0.03,
+      left,
+      top,
+      dist: realDist,
+      star: level >= 4 && i > 120,
+      lift: isCenter ? 5 + (i % 4) * 1.2 : 0,
+      centerBranch: isCenter,
     })
   }
   return dots
 }
 
-function parabolaPoint(from: { left: number; top: number }, to: RadDot, t: number) {
-  const x = from.left + (to.left - from.left) * t
-  const y = from.top + (to.top - from.top) * t - Math.sin(Math.PI * t) * to.lift
-  return { left: x, top: y }
+function quadPath(from: { left: number; top: number }, to: RadDot) {
+  const midX = (from.left + to.left) / 2
+  const midY = (from.top + to.top) / 2 - to.lift
+  return `M ${from.left} ${from.top} Q ${midX} ${midY} ${to.left} ${to.top}`
 }
 
-const cosmosStars = Array.from({ length: 72 }, (_, i) => ({
-  left: ((i * 47) % 100) + (i % 7) * 0.3,
-  top: ((i * 31) % 100) + (i % 5) * 0.4,
-  size: 1.5 + (i % 4),
-  delay: (i % 12) * 0.18,
+/** 二次贝塞尔上取点，供流光尾巴采样 */
+function quadPoint(from: { left: number; top: number }, to: RadDot, t: number) {
+  const mx = (from.left + to.left) / 2
+  const my = (from.top + to.top) / 2 - to.lift
+  const u = 1 - t
+  return {
+    left: u * u * from.left + 2 * u * t * mx + t * t * to.left,
+    top: u * u * from.top + 2 * u * t * my + t * t * to.top,
+  }
+}
+
+const cosmosStars = Array.from({ length: 120 }, (_, i) => ({
+  left: ((i * 53) % 100) + (i % 9) * 0.15,
+  top: ((i * 37) % 100) + (i % 6) * 0.2,
+  size: 1.2 + (i % 5) * 0.7,
+  delay: (i % 16) * 0.14,
+  drift: (i % 5) - 2,
+}))
+
+const shootingStars = Array.from({ length: 5 }, (_, i) => ({
+  left: 10 + i * 18,
+  top: 8 + (i % 3) * 12,
+  delay: 0.4 + i * 0.55,
+  len: 40 + i * 8,
 }))
 
 export function ScreenB() {
@@ -130,9 +148,12 @@ export function ScreenB() {
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
   const [reformT, setReformT] = useState(0)
-  const [flyT, setFlyT] = useState(1)
+  /** 涟漪半径（舞台百分比） */
+  const [rippleR, setRippleR] = useState(40)
+  /** 流光相位 0–1 */
+  const [flowPhase, setFlowPhase] = useState(0)
   const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
-  /** 宇宙星空 → 云南沙盘：intro 播放中 / done 已落地 */
+  /** 宇宙星空 → 云南沙盘 */
   const [cosmosPhase, setCosmosPhase] = useState<'intro' | 'zoom' | 'done'>('intro')
   const [cosmosKey, setCosmosKey] = useState(0)
   const branch = specialtyBranches.find((b) => b.id === branchId)!
@@ -148,16 +169,30 @@ export function ScreenB() {
 
   useEffect(() => {
     setCosmosPhase('intro')
-    const toZoom = window.setTimeout(() => setCosmosPhase('zoom'), 1600)
+    const toZoom = window.setTimeout(() => setCosmosPhase('zoom'), 2200)
     const toDone = window.setTimeout(() => {
       setCosmosPhase('done')
       setAutoLevel(true)
-    }, 3400)
+    }, 4800)
     return () => {
       window.clearTimeout(toZoom)
       window.clearTimeout(toDone)
     }
   }, [cosmosKey])
+
+  /** 中心支行抛物线流光持续扫动 */
+  useEffect(() => {
+    if (mod !== 'network' || cosmosPhase !== 'done' || level < 1 || reforming) return
+    let raf = 0
+    let start = performance.now()
+    const tick = (now: number) => {
+      const t = ((now - start) % 2800) / 2800
+      setFlowPhase(t)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [mod, cosmosPhase, level, reforming])
 
   /** 进入边境县 / 重播：沙盘自动跑马灯，依次高亮 25 县并在点位旁累计弹窗 */
   useEffect(() => {
@@ -196,27 +231,27 @@ export function ScreenB() {
         return
       }
       setLevel(i)
-    }, 1100)
+    }, 1400)
     return () => window.clearInterval(timer)
   }, [autoLevel, mod])
 
-  /** 层级切换时：点位从总行沿抛物线甩出 */
+  /** 层级切换：涟漪半径从 0 向外扩，点位依次显现 */
   useEffect(() => {
     if (mod !== 'network' || reforming || cosmosPhase !== 'done') return
-    setFlyT(0)
+    setRippleR(0)
     let t = 0
     const timer = window.setInterval(() => {
       t += 1
-      setFlyT(Math.min(1, t / 14))
-      if (t >= 14) window.clearInterval(timer)
-    }, 32)
+      setRippleR(Math.min(42, (t / 20) * 42))
+      if (t >= 20) window.clearInterval(timer)
+    }, 40)
     return () => window.clearInterval(timer)
   }, [level, mod, reforming, cosmosPhase])
 
   useEffect(() => {
     if (!reforming || mod !== 'network') return
     setReformT(0)
-    setFlyT(1)
+    setRippleR(42)
     let t = 0
     const timer = window.setInterval(() => {
       t += 1
@@ -289,6 +324,8 @@ export function ScreenB() {
 
         {cosmosOn && (
           <div key={cosmosKey} className={`cosmos-layer phase-${cosmosPhase}`} aria-hidden>
+            <div className="cosmos-nebula n1" />
+            <div className="cosmos-nebula n2" />
             <div className="cosmos-glow" />
             {cosmosStars.map((s, i) => (
               <span
@@ -300,6 +337,19 @@ export function ScreenB() {
                   width: s.size,
                   height: s.size,
                   animationDelay: `${s.delay}s`,
+                  ['--drift' as string]: `${s.drift}px`,
+                }}
+              />
+            ))}
+            {shootingStars.map((s, i) => (
+              <span
+                key={`shot-${i}`}
+                className="cosmos-shot"
+                style={{
+                  left: `${s.left}%`,
+                  top: `${s.top}%`,
+                  width: s.len,
+                  animationDelay: `${s.delay}s`,
                 }}
               />
             ))}
@@ -310,26 +360,58 @@ export function ScreenB() {
         <div className="sand-stage">
           {mod === 'network' && cosmosPhase === 'done' && (
             <>
-              <svg className="rad-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                {radiationDots.filter((d) => !d.hub && !d.star).slice(0, level >= 3 ? 36 : level >= 2 ? 22 : 12).map((d, i) => {
-                  const midX = (HQ.left + d.left) / 2
-                  const midY = (HQ.top + d.top) / 2 - d.lift * 0.55
-                  return (
-                    <path
-                      key={i}
-                      className="rad-arc"
-                      d={`M ${HQ.left} ${HQ.top} Q ${midX} ${midY} ${d.left} ${d.top}`}
-                      style={{ opacity: 0.18 + flyT * 0.35, transitionDelay: `${d.delay}s` }}
-                    />
-                  )
-                })}
-              </svg>
+              {level >= 1 && !reforming && rippleR > 0.2 && (
+                <div
+                  className="ripple-ring"
+                  style={{
+                    left: `${HQ.left}%`,
+                    top: `${HQ.top}%`,
+                    width: `${rippleR * 2}%`,
+                    height: `${rippleR * 1.6}%`,
+                  }}
+                />
+              )}
+              {level >= 1 && !reforming && (
+                <svg className="rad-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                  {radiationDots.filter((d) => d.centerBranch && d.dist <= rippleR + 1.2).map((d, i) => {
+                    const dPath = quadPath(HQ, d)
+                    const headT = (flowPhase + i * 0.09) % 1
+                    const tail: { left: number; top: number; o: number; s: number }[] = []
+                    for (let k = 0; k < 16; k += 1) {
+                      const tt = headT - k * 0.028
+                      if (tt < 0) break
+                      const p = quadPoint(HQ, d, tt)
+                      const fade = 1 - k / 16
+                      tail.push({
+                        left: p.left,
+                        top: p.top,
+                        o: fade * fade,
+                        s: k === 0 ? 0.72 : 0.55 * fade,
+                      })
+                    }
+                    return (
+                      <g key={i}>
+                        <path className="rad-arc-base" d={dPath} />
+                        {tail.map((p, k) => (
+                          <circle
+                            key={k}
+                            className={k === 0 ? 'flow-bead head' : 'flow-bead'}
+                            cx={p.left}
+                            cy={p.top}
+                            r={p.s}
+                            style={{ opacity: p.o }}
+                          />
+                        ))}
+                      </g>
+                    )
+                  })}
+                </svg>
+              )}
               {radiationDots.map((d, i) => {
                 const converge = reforming ? reformT / 18 : 0
-                const fly = reforming ? 1 : flyT
-                const along = parabolaPoint(HQ, d, Math.min(1, fly + d.delay * 0.15))
-                const left = along.left + (HQ.left - along.left) * converge
-                const top = along.top + (HQ.top - along.top) * converge
+                const shown = reforming || d.hub || d.dist <= rippleR + 0.8
+                const left = d.left + (HQ.left - d.left) * converge
+                const top = d.top + (HQ.top - d.top) * converge
                 return (
                   <span
                     key={i}
@@ -337,7 +419,8 @@ export function ScreenB() {
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
-                      opacity: reforming ? 0.3 + (1 - converge) * 0.7 : 0.35 + fly * 0.65,
+                      opacity: shown ? (reforming ? 0.3 + (1 - converge) * 0.7 : 1) : 0,
+                      transform: `translate(-50%, -50%) scale(${shown ? 1 : 0.35})`,
                     }}
                   />
                 )
@@ -396,23 +479,41 @@ export function ScreenB() {
         <aside className="bleed-side bleed-left viz-panel">
           {mod === 'network' && (
             <>
-              <div className="glass-card glass-hero">
-                <p className="glass-kicker">板块一 · 左右侧数据</p>
-                <div className="glass-kpi-row">
-                  <div><span>营业网点</span><strong className="num">2100<em>个</em></strong></div>
-                  <div><span>覆盖乡镇</span><strong className="num">1962<em>个</em></strong></div>
+              <div className="glass-card">
+                <p className="glass-kicker">二级按钮 · 层级点亮</p>
+                <h3>当前：{networkStats.levels[level].name}</h3>
+                <p className="viz-note">由昆明总行向外涟漪点亮；中心支行显示抛物线流光。</p>
+                <div className="level-btns">
+                  {levelBars.map((item, idx) => (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className={item.active ? 'is-on' : undefined}
+                      onClick={() => { setAutoLevel(false); setLevel(idx); setReforming(false) }}
+                    >
+                      <span>{item.label}</span>
+                      <strong className="num">{item.value}</strong>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className={reforming ? 'is-on' : undefined}
+                    disabled={reforming || autoLevel || cosmosOn}
+                    onClick={() => { setLevel(4); setReforming(true) }}
+                  >
+                    <span>{reforming ? '星光收束中…' : '农商行改制'}</span>
+                    <strong>收束</strong>
+                  </button>
                 </div>
               </div>
               <div className="glass-card">
-                <h3>渠道覆盖</h3>
-                <MetricTiles
-                  items={[
-                    { label: '自助银行', value: '2604' },
-                    { label: '服务站', value: networkStats.serviceStations },
-                    { label: '支付点', value: networkStats.payPoints },
-                    { label: '基础金融', value: '全覆盖' },
-                  ]}
-                />
+                <p className="glass-kicker">沙盘演示</p>
+                <div className="viz-actions tight">
+                  <button type="button" className="viz-cta ghost" onClick={replayCosmos}>重播星空切入</button>
+                  <button type="button" className="viz-cta ghost" disabled={autoLevel || reforming || cosmosOn} onClick={() => setAutoLevel(true)}>
+                    {autoLevel ? '点亮中…' : '自动依次点亮'}
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -543,35 +644,24 @@ export function ScreenB() {
         <aside className="bleed-side bleed-right viz-panel">
           {mod === 'network' && (
             <>
-              <div className="glass-card">
-                <p className="glass-kicker">二级按钮 · 层级点亮</p>
-                <h3>当前：{networkStats.levels[level].name}</h3>
-                <p className="viz-note">从昆明总行沿抛物线向外辐射；沙盘点位为层级抽样示意（中心支行 16、一级支行抽 42、支行抽 118），分理处以星光示意。清单全量见右侧数字。</p>
-                <div className="level-btns">
-                  {levelBars.map((item, idx) => (
-                    <button
-                      key={item.label}
-                      type="button"
-                      className={item.active ? 'is-on' : undefined}
-                      onClick={() => { setAutoLevel(false); setLevel(idx); setReforming(false) }}
-                    >
-                      <span>{item.label}</span>
-                      <strong className="num">{item.value}</strong>
-                    </button>
-                  ))}
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">数据看板</p>
+                <div className="glass-kpi-row">
+                  <div><span>营业网点</span><strong className="num">2100<em>个</em></strong></div>
+                  <div><span>覆盖乡镇</span><strong className="num">1962<em>个</em></strong></div>
                 </div>
               </div>
               <div className="glass-card">
-                <h3>沙盘演示</h3>
-                <div className="viz-actions tight">
-                  <button type="button" className="viz-cta ghost" onClick={replayCosmos}>重播星空切入</button>
-                  <button type="button" className="viz-cta ghost" disabled={autoLevel || reforming || cosmosOn} onClick={() => setAutoLevel(true)}>
-                    {autoLevel ? '点亮中…' : '自动依次点亮'}
-                  </button>
-                  <button type="button" className="viz-cta" disabled={reforming || autoLevel || cosmosOn} onClick={() => { setLevel(4); setReforming(true) }}>
-                    {reforming ? '星光收束中…' : '农商行改制 · 星光收束'}
-                  </button>
-                </div>
+                <h3>渠道覆盖</h3>
+                <MetricTiles
+                  items={[
+                    { label: '自助银行', value: '2604' },
+                    { label: '服务站', value: networkStats.serviceStations },
+                    { label: '支付点', value: networkStats.payPoints },
+                    { label: '基础金融', value: '全覆盖' },
+                  ]}
+                />
+                <p className="viz-note" style={{ marginTop: 8 }}>沙盘点位为层级抽样示意；右侧数字为清单全量。</p>
               </div>
             </>
           )}
