@@ -7,78 +7,14 @@ export type NoticeBlock =
 
 export type EScreen = {
   id: string
-  zone: '公众教育区' | '客户体验与互动区' | '理财销售专区'
+  zone: '客户体验与互动区'
   dept: string
   basis: string
   title: string
   blocks: NoticeBlock[]
 }
 
-export const eZones = ['公众教育区', '客户体验与互动区', '理财销售专区'] as const
-
 export const eNotices: EScreen[] = [
-  {
-    id: 'E01',
-    zone: '公众教育区',
-    dept: '内控合规部',
-    basis: '非监管强制规定',
-    title: '反洗钱法 · 第十条',
-    blocks: [
-      { kind: 'p', text: '《中华人民共和国反洗钱法》第十条' },
-      { kind: 'p', text: '任何单位和个人不得从事洗钱活动或者为洗钱活动提供便利，并应当配合金融机构和特定非金融机构依法开展的客户尽职调查。' },
-    ],
-  },
-  {
-    id: 'E02',
-    zone: '公众教育区',
-    dept: '内控合规部',
-    basis: '非监管强制规定',
-    title: '反洗钱法 · 第十一条',
-    blocks: [
-      { kind: 'p', text: '《中华人民共和国反洗钱法》第十一条' },
-      { kind: 'p', text: '任何单位和个人发现洗钱活动，有权向反洗钱行政主管部门、公安机关或者其他有关国家机关举报。接受举报的机关应当对举报人和举报内容保密。' },
-    ],
-  },
-  {
-    id: 'E03',
-    zone: '公众教育区',
-    dept: '运行管理部',
-    basis: '人民银行监管要求',
-    title: '网点反诈宣传',
-    blocks: [
-      { kind: 'p', text: '云南农村商业银行温馨提示' },
-      { kind: 'list', items: [
-        '银行不会要求您将资金转入“安全账户”。',
-        '客服不会索要短信验证码。',
-        '公检法不会在电话里查冻扣。',
-        '陌生二维码、远程控制、屏幕共享 = 高风险。',
-      ] },
-      { kind: 'p', text: '如有疑问请到网点咨询或拨打 96500；发现被骗立即拨打 96110。' },
-    ],
-  },
-  {
-    id: 'E08',
-    zone: '公众教育区',
-    dept: '银行卡中心',
-    basis: '金监局、人民银行及内部管理要求',
-    title: '银行卡安全用卡宣传',
-    blocks: [
-      { kind: 'p', text: '为切实保障您的资金与账户安全，防范电信网络诈骗、盗刷、信息泄露等风险，请规范、安全使用银行卡。' },
-      { kind: 'h', text: '一、妥善保管卡片，切勿转借出租' },
-      { kind: 'list', items: ['不出租、不出借、不出售本人银行卡及账户。', '不将银行卡交由他人代为使用；过期、废旧卡及时剪毁。', '银行卡、身份证、手机分开存放。'] },
-      { kind: 'h', text: '二、严守密码和验证码' },
-      { kind: 'list', items: ['密码、短信验证码、动态口令绝不告诉任何人。', '不设置简单密码或生日密码，并定期更换。', '自称客服、公检法、退款理赔、贷款注销并索要验证码或密码的，均为诈骗。'] },
-      { kind: 'h', text: '三、规范线上支付' },
-      { kind: 'list', items: ['只在正规平台、官方渠道支付、绑卡、转账。', '不点击陌生链接，不扫描陌生二维码，不下载来路不明的应用。', '开通交易提醒，异常交易立即挂失冻结。'] },
-      { kind: 'h', text: '四、ATM 及线下用卡' },
-      { kind: 'list', items: ['取款时遮挡密码，发现可疑设备或摄像头及时离开并反馈银行。', '交易完成后取走卡片，不遗留银行卡信息。'] },
-      { kind: 'h', text: '五、警惕诈骗陷阱' },
-      { kind: 'p', text: '远离刷单返利、虚假征信、冒充客服、投资理财、公检法办案、熟人借钱等骗局。陌生来电不轻信、陌生链接不点击、陌生转账不操作、个人信息不泄露。' },
-      { kind: 'h', text: '六、异常情况及时处置' },
-      { kind: 'p', text: '银行卡丢失、被盗刷、信息泄露或出现异常交易，请立即挂失、冻结账户，联系客服 96500，必要时向公安机关报案。' },
-      { kind: 'p', text: '云南农村商业银行股份有限公司' },
-    ],
-  },
   {
     id: 'E04-1',
     zone: '客户体验与互动区',
@@ -228,17 +164,6 @@ export const eNotices: EScreen[] = [
       { kind: 'p', text: 'For eligible customers, a personal account can be opened on the day of application and used from the opening date.' },
       { kind: 'h', text: 'Service Supervision Hot-line' },
       { kind: 'p', text: 'Yunnan Rural Credit Cooperatives: 96500. Branch and legal-entity telephone numbers are filled in by the outlet.' },
-    ],
-  },
-  {
-    id: 'E05',
-    zone: '理财销售专区',
-    dept: '个人金融部',
-    basis: '内部管理要求及外部监管要求',
-    title: '理财产品销售人员照片及工号',
-    blocks: [
-      { kind: 'p', text: '本屏用于在理财销售专区低柜围挡上公示理财产品销售人员照片及工号。' },
-      { kind: 'p', text: '现有资料包未提供销售人员名单、照片和工号，因此本页不编造人员信息。名单到位后按“照片 + 姓名 + 工号”上屏。' },
     ],
   },
   {
