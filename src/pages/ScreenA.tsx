@@ -34,30 +34,37 @@ export function ScreenA() {
       <div className="bleed hall-bleed">
         <img className="bleed-bg" src={`${base}hall/exhibition-hall.jpg`} alt="" />
         <div className="bleed-wash is-soft" />
-        <h2 className="bleed-title">行内数据</h2>
-        <aside className="bleed-side bleed-left">
-          <RateTable title={demand.title} rows={demand.rows} />
-          <RateTable title={term.title} rows={term.rows} />
-        </aside>
-        <div className="hall-wealth">
-          {wealthProducts.map((item) => (
-            <article key={item.series}>
-              <b>{item.series}</b>
-              <p>{item.name}</p>
-              <em>〔{item.tag}〕</em>
-              <div>
-                {item.metrics.map((m) => (
-                  <span key={m.k}><strong className="num">{m.v}</strong><i>{m.k}</i></span>
-                ))}
-              </div>
-            </article>
-          ))}
+        <div className="hall-board">
+          <header className="hall-head">
+            <span>存款利率 · 自营理财</span>
+            <h2>行内数据</h2>
+          </header>
+          <aside className="hall-col">
+            <RateTable title={demand.title} rows={demand.rows} />
+            <RateTable title={term.title} rows={term.rows} />
+          </aside>
+          <section className="hall-stage">
+            <div className="hall-wealth">
+              {wealthProducts.map((item) => (
+                <article key={item.series}>
+                  <b>{item.series}</b>
+                  <p>{item.name}</p>
+                  <em>{item.tag}</em>
+                  <div>
+                    {item.metrics.map((m) => (
+                      <span key={m.k}><strong className="num">{m.v}</strong><i>{m.k}</i></span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+          <aside className="hall-col">
+            <RateTable title={agreement.title} rows={agreement.rows} />
+            <RateTable title={notice.title} rows={notice.rows} />
+            <RateTable title={structured.title} rows={structured.rows} />
+          </aside>
         </div>
-        <aside className="bleed-side bleed-right">
-          <RateTable title={agreement.title} rows={agreement.rows} />
-          <RateTable title={notice.title} rows={notice.rows} />
-          <RateTable title={structured.title} rows={structured.rows} />
-        </aside>
       </div>
     </Stage>
   )
