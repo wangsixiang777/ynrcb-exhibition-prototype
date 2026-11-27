@@ -540,16 +540,19 @@ img { max-width: 100%; display: block; }
 }
 .county-pop {
   position: absolute;
-  left: 16px;
-  top: -8px;
-  min-width: 92px;
-  padding: 6px 8px;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  min-width: 96px;
+  padding: 7px 10px;
   border-radius: 10px;
-  background: rgba(255, 248, 232, 0.94);
+  background: rgba(255, 248, 232, 0.96);
   border: 1px solid rgba(224, 160, 70, 0.55);
   box-shadow: 0 8px 18px rgba(120, 50, 10, 0.18);
   color: #7a3e12;
   white-space: nowrap;
+  text-align: center;
+  z-index: 3;
 }
 .county-pop b { display: block; font-size: 11px; font-weight: 650; }
 .county-pop strong { display: block; margin-top: 2px; font-size: 14px; color: #d35400; }
@@ -562,8 +565,8 @@ img { max-width: 100%; display: block; }
   to { transform: scale(1.35); opacity: 0; }
 }
 @keyframes countyPopIn {
-  from { transform: translateY(6px) scale(0.92); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  from { transform: translate(-50%, 6px) scale(0.92); opacity: 0; }
+  to { transform: translate(-50%, 0) scale(1); opacity: 1; }
 }
 .sand-arrows {
   position: absolute;

@@ -27,15 +27,16 @@ const modules: { id: Module; label: string }[] = [
 /** 昆明示意中心 */
 const HQ = { left: 52, top: 48 }
 
-/** 边境县示意点位（非测绘，沿滇西—滇南边境排布） */
+/** 边境县示意点位（非测绘；集中在沙盘中区，避开左右看板） */
 const borderPins = borderCounties.map((c, i) => {
-  const t = i / Math.max(borderCounties.length - 1, 1)
-  const arc = (t - 0.5) * Math.PI * 0.95
+  const cols = 5
+  const col = i % cols
+  const row = Math.floor(i / cols)
   return {
     name: c.name,
     n: c.n,
-    left: 28 + Math.sin(arc) * 26 + (i % 3) * 1.2,
-    top: 34 + Math.cos(arc) * 18 + (i % 5) * 1.4,
+    left: 38 + col * 6.2 + (row % 2) * 2.4,
+    top: 30 + row * 8.5 + (col % 2) * 1.6,
   }
 })
 
@@ -276,7 +277,6 @@ export function ScreenB() {
           {(mod === 'border' || mod === 'happy') && borderPins.map((p, i) => {
             const lit = litCounties.includes(i) || (mod === 'happy' && i < 14)
             const hot = mod === 'border' && borderIdx === i
-            const showPop = mod === 'border' && lit
             return (
               <div
                 key={p.name}
@@ -285,8 +285,8 @@ export function ScreenB() {
               >
                 <i className="county-dot" />
                 {hot ? <em className="county-pulse" /> : null}
-                {showPop ? (
-                  <div className={`county-pop${hot ? ' is-new' : ''}`}>
+                {hot ? (
+                  <div className="county-pop is-new">
                     <b>{p.name.replace('/芒市相关', '')}</b>
                     <strong className="num">{p.n} 个网点</strong>
                   </div>
@@ -518,7 +518,7 @@ export function ScreenB() {
                 <p className="glass-kicker">沙盘跑马灯</p>
                 <h3>{playing ? '依次高亮边境县' : '25 县已点亮完毕'}</h3>
                 <p className="viz-note">
-                  地图上逐县高亮选中；每到一县在点位旁弹出该县网点数，弹窗累计不消失。
+                  沙盘上依次高亮选中边境县；仅当前选中县显示网点数弹窗，切到下一县后上一弹窗收起。已点亮的县保留高亮点。
                 </p>
                 <div className="glass-kpi-row">
                   <div><span>已高亮</span><strong className="num">{litCounties.length}<em>/25</em></strong></div>
