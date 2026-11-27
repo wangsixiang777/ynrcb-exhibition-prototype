@@ -490,10 +490,18 @@ export function ScreenB() {
                 <p className="viz-miss" style={{ marginTop: 8 }}>{borderSide.missing}</p>
               </div>
               <div className="glass-card">
+                <h3>跨境结算</h3>
+                <MetricTiles items={borderSide.mutualMetrics} />
+              </div>
+              <div className="glass-card">
                 <p className="glass-kicker">信贷数据</p>
                 <h3>边境信贷</h3>
                 <p className="viz-note">模拟占位，正式数据由客户填写。</p>
                 <MetricTiles items={borderSide.creditPlaceholders} />
+              </div>
+              <div className="glass-card">
+                <h3>分县网点 · Top8</h3>
+                <HBars items={borderBars.slice(0, 8)} />
               </div>
             </>
           )}
@@ -628,23 +636,11 @@ export function ScreenB() {
           )}
 
           {mod === 'border' && (
-            <>
-              <div className="glass-card">
-                <p className="glass-kicker">边民互市</p>
-                <h3>贸易新业态综合服务</h3>
-                <p className="viz-lead">{borderSide.mutualLead}</p>
-                <div className="cap-row">
-                  {borderSide.mutualCaps.map((c) => (
-                    <span key={c} className="cap-pill">{c}</span>
-                  ))}
-                </div>
-                <MetricTiles items={borderSide.mutualMetrics} />
-              </div>
-              <div className="glass-card">
-                <h3>分县网点 · Top8</h3>
-                <HBars items={borderBars.slice(0, 8)} />
-              </div>
-            </>
+            <div className="glass-card">
+              <p className="glass-kicker">边民互市</p>
+              <h3>贸易新业态综合服务系统</h3>
+              <p className="mutual-copy">{borderSide.mutual}</p>
+            </div>
           )}
 
           {mod === 'happy' && (
