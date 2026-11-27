@@ -58,6 +58,13 @@ function makeRadiationDots(level: number) {
   return dots
 }
 
+const cosmosStars = Array.from({ length: 72 }, (_, i) => ({
+  left: ((i * 47) % 100) + (i % 7) * 0.3,
+  top: ((i * 31) % 100) + (i % 5) * 0.4,
+  size: 1.5 + (i % 4),
+  delay: (i % 12) * 0.18,
+}))
+
 export function ScreenB() {
   const [mod, setMod] = useState<Module>('network')
   const [level, setLevel] = useState(0)
@@ -72,8 +79,32 @@ export function ScreenB() {
   const [reforming, setReforming] = useState(false)
   const [reformT, setReformT] = useState(0)
   const [peerId, setPeerId] = useState<'vn' | 'la' | 'mm' | 'api'>('vn')
+  /** 宇宙星空 → 云南沙盘：intro 播放中 / done 已落地 */
+  const [cosmosPhase, setCosmosPhase] = useState<'intro' | 'zoom' | 'done'>('intro')
+  const [cosmosKey, setCosmosKey] = useState(0)
   const branch = specialtyBranches.find((b) => b.id === branchId)!
   const base = import.meta.env.BASE_URL
+
+  const replayCosmos = () => {
+    setCosmosPhase('intro')
+    setCosmosKey((k) => k + 1)
+    setLevel(0)
+    setAutoLevel(false)
+    setReforming(false)
+  }
+
+  useEffect(() => {
+    setCosmosPhase('intro')
+    const toZoom = window.setTimeout(() => setCosmosPhase('zoom'), 1600)
+    const toDone = window.setTimeout(() => {
+      setCosmosPhase('done')
+      setAutoLevel(true)
+    }, 3400)
+    return () => {
+      window.clearTimeout(toZoom)
+      window.clearTimeout(toDone)
+    }
+  }, [cosmosKey])
 
   useEffect(() => {
     if (!playing || mod !== 'border') return
@@ -175,14 +206,40 @@ export function ScreenB() {
     setReforming(false)
   }
 
+  const cosmosOn = cosmosPhase !== 'done'
+
   return (
     <Stage tone="viz">
-      <div className="bleed sand-bleed is-bright">
-        <img className="bleed-bg" src={`${base}maps/yunnan-sandtable-bright.jpg`} alt="" />
+      <div className={`bleed sand-bleed is-bright${cosmosOn ? ' cosmos-on' : ''}`}>
+        <img
+          className={`bleed-bg${cosmosPhase === 'intro' ? ' is-far' : ''}${cosmosPhase === 'zoom' ? ' is-arrive' : ''}`}
+          src={`${base}maps/yunnan-sandtable-bright.jpg`}
+          alt=""
+        />
         <div className="bleed-wash sand-wash-bright" />
 
+        {cosmosOn && (
+          <div key={cosmosKey} className={`cosmos-layer phase-${cosmosPhase}`} aria-hidden>
+            <div className="cosmos-glow" />
+            {cosmosStars.map((s, i) => (
+              <span
+                key={i}
+                className="cosmos-star"
+                style={{
+                  left: `${s.left}%`,
+                  top: `${s.top}%`,
+                  width: s.size,
+                  height: s.size,
+                  animationDelay: `${s.delay}s`,
+                }}
+              />
+            ))}
+            <p className="cosmos-caption">宇宙星空 · 切入云南沙盘</p>
+          </div>
+        )}
+
         <div className="sand-stage">
-          {mod === 'network' && radiationDots.map((d, i) => {
+          {mod === 'network' && cosmosPhase === 'done' && radiationDots.map((d, i) => {
             const converge = reforming ? reformT / 16 : 0
             const left = d.left + (HQ.left - d.left) * converge
             const top = d.top + (HQ.top - d.top) * converge
@@ -384,10 +441,13 @@ export function ScreenB() {
               <p className="viz-note">由昆明总行向外辐射；分理处为星光点。点层级或点「自动点亮」演示。</p>
               <HBars items={levelBars} />
               <div className="viz-actions">
+                <button type="button" className="viz-cta ghost" onClick={replayCosmos}>
+                  重播星空切入
+                </button>
                 <button
                   type="button"
                   className="viz-cta ghost"
-                  disabled={autoLevel || reforming}
+                  disabled={autoLevel || reforming || cosmosOn}
                   onClick={() => setAutoLevel(true)}
                 >
                   {autoLevel ? '点亮中…' : '自动点亮'}
@@ -395,7 +455,7 @@ export function ScreenB() {
                 <button
                   type="button"
                   className="viz-cta"
-                  disabled={reforming || autoLevel}
+                  disabled={reforming || autoLevel || cosmosOn}
                   onClick={() => { setLevel(4); setReforming(true) }}
                 >
                   {reforming ? '星光收束中…' : '农商行改制 · 星光收束'}
