@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Stage } from '../components/Stage'
-import { CompareBars, FlowBoard, HBars, MetricTiles, RingStat } from '../components/VizBits'
+import { CompareBars, FlowBoard, HBars, MetricTiles } from '../components/VizBits'
 import {
   borderCounties,
   povertyPhoto,
@@ -308,219 +308,240 @@ export function ScreenB() {
 
         <aside className="bleed-side bleed-left viz-panel">
           {mod === 'network' && (
-            <div className="viz-card">
-              <h3>覆盖规模</h3>
-              <div className="viz-rings">
-                <RingStat label="营业网点" value="2100" percent={100} />
-                <RingStat label="覆盖乡镇" value="1962" percent={100} />
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块一 · 左右侧数据</p>
+                <div className="glass-kpi-row">
+                  <div><span>营业网点</span><strong className="num">2100<em>个</em></strong></div>
+                  <div><span>覆盖乡镇</span><strong className="num">1962<em>个</em></strong></div>
+                </div>
               </div>
-              <MetricTiles
-                items={[
-                  { label: '自助银行', value: '2604' },
-                  { label: '服务站', value: networkStats.serviceStations },
-                  { label: '支付点', value: networkStats.payPoints },
-                  { label: '基础金融', value: '全覆盖' },
-                ]}
-              />
-            </div>
+              <div className="glass-card">
+                <h3>渠道覆盖</h3>
+                <MetricTiles
+                  items={[
+                    { label: '自助银行', value: '2604' },
+                    { label: '服务站', value: networkStats.serviceStations },
+                    { label: '支付点', value: networkStats.payPoints },
+                    { label: '基础金融', value: '全覆盖' },
+                  ]}
+                />
+              </div>
+            </>
           )}
 
           {mod === 'specialty' && (
-            <div className="viz-card">
-              <div className="viz-head">
-                <span className="chip">{branch.tag}</span>
-                <h3>{branch.name}</h3>
-              </div>
+            <div className="glass-card">
+              <p className="glass-kicker">板块二 · 网点介绍</p>
+              <span className="chip">{branch.tag}</span>
+              <h3>{branch.name}</h3>
               <p className="viz-lead">{branch.text}</p>
-              <div className="viz-chips">
-                {branch.facts.slice(0, 6).map((f) => (
-                  <div key={f.k} className="viz-chip">
-                    <b>{f.k}</b>
-                    <span>{f.v}</span>
-                  </div>
+              <div className="viz-chips compact">
+                {branch.facts.slice(0, 4).map((f) => (
+                  <div key={f.k} className="viz-chip"><b>{f.k}</b><span>{f.v}</span></div>
                 ))}
               </div>
             </div>
           )}
 
           {mod === 'border' && (
-            <div className="viz-card">
-              <h3>边境金融服务</h3>
-              <div className="viz-rings">
-                <RingStat label="边境县" value={`${borderSide.counties}`} percent={100} />
-                <RingStat label="边境网点" value={`约${borderSide.branches}`} percent={100} />
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块三 · 边境概览</p>
+                <div className="glass-kpi-row">
+                  <div><span>边境县</span><strong className="num">{borderSide.counties}</strong></div>
+                  <div><span>边境网点</span><strong className="num">约{borderSide.branches}</strong></div>
+                </div>
               </div>
-              <MetricTiles
-                items={[
-                  { label: '跨境结算', value: '638亿+', tip: '累计' },
-                  { label: '结算规模', value: '8.8亿$', tip: '美元' },
-                  { label: '口岸', value: '3', tip: '磨憨勐满关累' },
-                  { label: '签约边民', value: '3192' },
-                  { label: '商家', value: '419' },
-                  { label: '结算笔数', value: '21.76万', tip: '17.17亿元' },
-                  { label: '互市点', value: '20', tip: '新业态系统' },
-                ]}
-              />
-              <p className="viz-miss">{borderSide.missing}</p>
-            </div>
+              <div className="glass-card">
+                <h3>跨境结算</h3>
+                <MetricTiles
+                  items={[
+                    { label: '累计结算', value: '638亿+' },
+                    { label: '美元规模', value: '8.8亿$' },
+                    { label: '重点口岸', value: '3', tip: '磨憨勐满关累' },
+                    { label: '签约边民', value: '3192' },
+                    { label: '商家', value: '419' },
+                    { label: '结算单', value: '21.76万', tip: '17.17亿元' },
+                  ]}
+                />
+                <p className="viz-miss">{borderSide.missing}</p>
+              </div>
+            </>
           )}
 
           {mod === 'happy' && (
-            <div className="viz-card">
-              <h3>边境幸福村网点</h3>
-              <div className="viz-rings">
-                <RingStat label="营业网点" value={`${happyVillage.outlets}`} percent={100} />
-                <RingStat label="贷款余额" value="264.42" percent={100} sub="亿元" />
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块四 · 幸福村</p>
+                <div className="glass-kpi-row">
+                  <div><span>营业网点</span><strong className="num">{happyVillage.outlets}</strong></div>
+                  <div><span>贷款余额</span><strong className="num">264.42<em>亿</em></strong></div>
+                </div>
               </div>
-              <div className="viz-gauge">
-                <div className="viz-gauge-lab">贷款余额</div>
-                <div className="viz-gauge-track"><i style={{ width: '100%' }} /></div>
-                <strong className="num">264.42 亿元</strong>
+              <div className="glass-card">
+                <h3>待补字段</h3>
+                <p className="viz-lead">{happyVillage.missing}</p>
               </div>
-              <p className="viz-miss">{happyVillage.missing}</p>
-            </div>
+            </>
           )}
 
           {mod === 'revitalize' && (
-            <div className="viz-card">
-              <h3>帮扶县对比</h3>
-              <CompareBars
-                rows={[
-                  {
-                    label: '县数',
-                    a: revitalization.national.counties,
-                    b: revitalization.provincial.counties,
-                    aLab: `${revitalization.national.counties}`,
-                    bLab: `${revitalization.provincial.counties}`,
-                  },
-                  {
-                    label: '网点',
-                    a: revitalization.national.branches,
-                    b: revitalization.provincial.branches,
-                    aLab: `${revitalization.national.branches}`,
-                    bLab: `${revitalization.provincial.branches}`,
-                  },
-                ]}
-              />
-              <MetricTiles
-                items={[
-                  { label: '国家帮扶贷款', value: '1200亿+' },
-                  { label: '脱贫小额信贷', value: '97%', tip: '全省投放占比' },
-                  { label: '建档农户', value: '941万', tip: '建档面 95%' },
-                ]}
-              />
-            </div>
+            <>
+              <div className="glass-card glass-hero">
+                <p className="glass-kicker">板块五 · 帮扶成效</p>
+                <MetricTiles
+                  items={[
+                    { label: '国家帮扶贷款', value: '1200亿+' },
+                    { label: '脱贫小额信贷', value: '97%', tip: '全省投放占比' },
+                    { label: '建档农户', value: '941万', tip: '建档面 95%' },
+                  ]}
+                />
+              </div>
+              <div className="glass-card">
+                <h3>国家 / 省级对比</h3>
+                <CompareBars
+                  rows={[
+                    {
+                      label: '县数',
+                      a: revitalization.national.counties,
+                      b: revitalization.provincial.counties,
+                      aLab: `${revitalization.national.counties}`,
+                      bLab: `${revitalization.provincial.counties}`,
+                    },
+                    {
+                      label: '网点',
+                      a: revitalization.national.branches,
+                      b: revitalization.provincial.branches,
+                      aLab: `${revitalization.national.branches}`,
+                      bLab: `${revitalization.provincial.branches}`,
+                    },
+                  ]}
+                />
+              </div>
+            </>
           )}
 
           {mod === 'overseas' && (
-            <div className="viz-card">
-              <h3>境外同业接入</h3>
+            <div className="glass-card">
+              <p className="glass-kicker">板块六 · 二级按钮</p>
+              <h3>选择服务能力</h3>
+              <div className="glass-btns">
+                {overseas.map((o) => (
+                  <button
+                    key={o.id}
+                    type="button"
+                    className={(o.id === 'api' ? peerId === 'api' : peerId !== 'api') ? 'is-on' : undefined}
+                    onClick={() => {
+                      setPeerId(o.id === 'api' ? 'api' : 'vn')
+                      setModal({ title: o.title, body: o.body })
+                    }}
+                  >
+                    {o.title}
+                  </button>
+                ))}
+              </div>
               <FlowBoard
                 center="云南农信"
                 nodes={[
-                  { id: 'vn', label: '越南银行', count: 6, active: peerId === 'vn', onClick: () => setPeerId('vn') },
-                  { id: 'la', label: '老挝银行', count: 1, active: peerId === 'la', onClick: () => setPeerId('la') },
-                  { id: 'mm', label: '缅甸银行', count: 1, active: peerId === 'mm', onClick: () => setPeerId('mm') },
+                  { id: 'vn', label: '越南', count: 6, active: peerId === 'vn', onClick: () => setPeerId('vn') },
+                  { id: 'la', label: '老挝', count: 1, active: peerId === 'la', onClick: () => setPeerId('la') },
+                  { id: 'mm', label: '缅甸', count: 1, active: peerId === 'mm', onClick: () => setPeerId('mm') },
                 ]}
               />
-              <button
-                type="button"
-                className={peerId === 'api' ? 'viz-cta on' : 'viz-cta'}
-                onClick={() => setPeerId('api')}
-              >
-                API 直联 · 中老实时结算
-              </button>
             </div>
           )}
         </aside>
 
         <aside className="bleed-side bleed-right viz-panel">
           {mod === 'network' && (
-            <div className="viz-card">
-              <h3>层级点亮 · {networkStats.levels[level].name}</h3>
-              <p className="viz-note">由昆明总行向外辐射；分理处为星光点。点层级或点「自动点亮」演示。</p>
-              <HBars items={levelBars} />
-              <div className="viz-actions">
-                <button type="button" className="viz-cta ghost" onClick={replayCosmos}>
-                  重播星空切入
-                </button>
-                <button
-                  type="button"
-                  className="viz-cta ghost"
-                  disabled={autoLevel || reforming || cosmosOn}
-                  onClick={() => setAutoLevel(true)}
-                >
-                  {autoLevel ? '点亮中…' : '自动点亮'}
-                </button>
-                <button
-                  type="button"
-                  className="viz-cta"
-                  disabled={reforming || autoLevel || cosmosOn}
-                  onClick={() => { setLevel(4); setReforming(true) }}
-                >
-                  {reforming ? '星光收束中…' : '农商行改制 · 星光收束'}
-                </button>
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">二级按钮 · 层级点亮</p>
+                <h3>当前：{networkStats.levels[level].name}</h3>
+                <p className="viz-note">总行向外辐射；分理处以星光示意。数量来自网点清单。</p>
+                <div className="level-btns">
+                  {levelBars.map((item, idx) => (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className={item.active ? 'is-on' : undefined}
+                      onClick={() => { setAutoLevel(false); setLevel(idx); setReforming(false) }}
+                    >
+                      <span>{item.label}</span>
+                      <strong className="num">{item.value}</strong>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p className="viz-note">服务站 60 为清单口径，与「1.3万+服务站」不同口径</p>
-            </div>
+              <div className="glass-card">
+                <h3>沙盘演示</h3>
+                <div className="viz-actions tight">
+                  <button type="button" className="viz-cta ghost" onClick={replayCosmos}>重播星空切入</button>
+                  <button type="button" className="viz-cta ghost" disabled={autoLevel || reforming || cosmosOn} onClick={() => setAutoLevel(true)}>
+                    {autoLevel ? '点亮中…' : '自动依次点亮'}
+                  </button>
+                  <button type="button" className="viz-cta" disabled={reforming || autoLevel || cosmosOn} onClick={() => { setLevel(4); setReforming(true) }}>
+                    {reforming ? '星光收束中…' : '农商行改制 · 星光收束'}
+                  </button>
+                </div>
+              </div>
+            </>
           )}
 
           {mod === 'specialty' && (
-            <div className="viz-card spec-media">
-              <h3>网点实拍</h3>
-              <img src={`${base}${branch.photo}`} alt={branch.name} />
-              {branch.id === 'dulong' ? (
-                <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} />
-              ) : null}
-              <div className="spec-switches">
-                {specialtyBranches.map((b) => (
-                  <button
-                    key={b.id}
-                    type="button"
-                    className={branchId === b.id ? 'is-on' : undefined}
-                    onClick={() => setBranchId(b.id)}
-                  >
-                    <b>{b.short}</b>
-                    <em>{b.tag}</em>
-                  </button>
-                ))}
+            <>
+              <div className="glass-card spec-media">
+                <p className="glass-kicker">右侧图片</p>
+                <img src={`${base}${branch.photo}`} alt={branch.name} />
+                {branch.id === 'dulong' ? <img src={`${base}${povertyPhoto}`} alt={povertyCase.title} /> : null}
               </div>
-            </div>
+              <div className="glass-card">
+                <p className="glass-kicker">五个二级按键</p>
+                <div className="spec-switches">
+                  {specialtyBranches.map((b) => (
+                    <button key={b.id} type="button" className={branchId === b.id ? 'is-on' : undefined} onClick={() => setBranchId(b.id)}>
+                      <b>{b.short}</b>
+                      <em>{b.tag}</em>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
 
           {mod === 'border' && (
-            <div className="viz-card">
-              <h3>分县网点量 · Top12</h3>
-              <p className="viz-note">沙盘 25 县示意点依次亮起；弹窗累计不消失</p>
-              <HBars items={borderBars} />
-              <button type="button" className="viz-cta" disabled={playing} onClick={() => setPlaying(true)}>
-                {playing ? `跑马灯 ${litCounties.length}/25` : '跑马灯依次点亮'}
-              </button>
-            </div>
+            <>
+              <div className="glass-card">
+                <p className="glass-kicker">跑马灯交互</p>
+                <h3>25 县依次点亮</h3>
+                <p className="viz-note">每到一县弹出网点数，弹窗累计不消失。</p>
+                <button type="button" className="viz-cta" disabled={playing} onClick={() => setPlaying(true)}>
+                  {playing ? `演示中 ${litCounties.length}/25` : '开始跑马灯'}
+                </button>
+              </div>
+              <div className="glass-card">
+                <h3>分县网点 · Top8</h3>
+                <HBars items={borderBars.slice(0, 8)} />
+              </div>
+            </>
           )}
 
           {mod === 'happy' && (
-            <div className="viz-card">
-              <h3>清单口径</h3>
-              <div className="viz-stack">
-                <div className="viz-stack-item">
-                  <span>边境幸福村营业网点</span>
-                  <strong className="num">126</strong>
-                </div>
-                <div className="viz-stack-item">
-                  <span>贷款余额</span>
-                  <strong className="num">264.42 亿</strong>
-                </div>
-              </div>
-              <p className="viz-note">幸福村总数、覆盖人数、民族系列产品：资料未给分项，不编造。</p>
+            <div className="glass-card">
+              <p className="glass-kicker">沙盘说明</p>
+              <h3>边境县亮起示意</h3>
+              <p className="viz-lead">需求写明与边境县类似的跑马灯效果。资料仅有幸福村网点 126、贷款余额 264.42 亿元；民族系列产品无分项表。</p>
+              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>查看边境县跑马灯</button>
             </div>
           )}
 
           {mod === 'revitalize' && (
-            <div className="viz-card">
-              <div className="seg">
-                <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级</button>
-                <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级</button>
+            <div className="glass-card">
+              <p className="glass-kicker">二级按钮</p>
+              <div className="seg wide">
+                <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级帮扶县</button>
+                <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级帮扶县</button>
               </div>
               <div className="viz-stack">
                 <div className="viz-stack-item">
@@ -537,12 +558,11 @@ export function ScreenB() {
           )}
 
           {mod === 'overseas' && (
-            <div className="viz-card">
+            <div className="glass-card">
+              <p className="glass-kicker">说明弹窗内容</p>
               <h3>{peer.title}</h3>
               <p className="viz-lead">{peer.body}</p>
-              <button type="button" className="viz-cta" onClick={() => setModal({ title: peer.title, body: peer.body })}>
-                展开说明弹窗
-              </button>
+              <button type="button" className="viz-cta" onClick={() => setModal({ title: peer.title, body: peer.body })}>打开弹窗</button>
             </div>
           )}
         </aside>
