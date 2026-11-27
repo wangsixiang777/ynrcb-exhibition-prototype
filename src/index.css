@@ -470,8 +470,8 @@ img { max-width: 100%; display: block; }
   z-index: 1;
   pointer-events: none;
 }
-.sand-stage .map-pin,
-.sand-stage .county-pin { pointer-events: auto; }
+.sand-stage .map-pin { pointer-events: auto; }
+.sand-stage .county-pin { pointer-events: none; }
 .sand-dot {
   position: absolute;
   width: 9px;
@@ -505,34 +505,65 @@ img { max-width: 100%; display: block; }
   position: absolute;
   transform: translate(-50%, -50%);
   z-index: 2;
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  background: transparent;
-  color: #7a3e12;
+  pointer-events: none;
 }
-.county-pin i {
-  width: 10px;
-  height: 10px;
+.county-dot {
+  display: block;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: rgba(180, 120, 60, 0.35);
-  border: 1px solid rgba(180, 120, 60, 0.45);
+  background: rgba(180, 120, 60, 0.28);
+  border: 1px solid rgba(180, 120, 60, 0.4);
 }
-.county-pin.lit i {
+.county-pin.lit .county-dot {
   background: #e85d1c;
   border-color: #ffb24a;
   box-shadow: 0 0 0 4px rgba(232, 93, 28, 0.22), 0 0 10px rgba(232, 93, 28, 0.5);
 }
-.county-pin.hot i {
+.county-pin.hot .county-dot {
+  width: 14px;
+  height: 14px;
   background: #c4161c;
-  box-shadow: 0 0 0 5px rgba(196, 22, 28, 0.25), 0 0 14px rgba(196, 22, 28, 0.55);
+  box-shadow: 0 0 0 6px rgba(196, 22, 28, 0.28), 0 0 18px rgba(196, 22, 28, 0.65);
 }
-.county-pin span {
-  padding: 1px 6px;
-  border-radius: 6px;
-  background: rgba(255, 248, 230, 0.94);
+.county-pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-radius: 50%;
+  border: 2px solid rgba(196, 22, 28, 0.55);
+  animation: countyPulse 0.7s ease-out;
+  pointer-events: none;
+}
+.county-pop {
+  position: absolute;
+  left: 16px;
+  top: -8px;
+  min-width: 92px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(255, 248, 232, 0.94);
+  border: 1px solid rgba(224, 160, 70, 0.55);
+  box-shadow: 0 8px 18px rgba(120, 50, 10, 0.18);
   color: #7a3e12;
-  font-size: 11px;
+  white-space: nowrap;
+}
+.county-pop b { display: block; font-size: 11px; font-weight: 650; }
+.county-pop strong { display: block; margin-top: 2px; font-size: 14px; color: #d35400; }
+.county-pop.is-new {
+  outline: 2px solid rgba(232, 93, 28, 0.45);
+  animation: countyPopIn 0.35s ease-out;
+}
+@keyframes countyPulse {
+  from { transform: scale(0.4); opacity: 1; }
+  to { transform: scale(1.35); opacity: 0; }
+}
+@keyframes countyPopIn {
+  from { transform: translateY(6px) scale(0.92); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 .sand-arrows {
   position: absolute;

@@ -71,10 +71,10 @@ export function ScreenB() {
   const [branchId, setBranchId] = useState(specialtyBranches[0].id)
   const [borderIdx, setBorderIdx] = useState(-1)
   const [litCounties, setLitCounties] = useState<number[]>([])
-  const [popups, setPopups] = useState<{ name: string; n: number }[]>([])
   const [revType, setRevType] = useState<'national' | 'provincial'>('national')
   const [modal, setModal] = useState<null | { title: string; body: string }>(null)
   const [playing, setPlaying] = useState(false)
+  const [borderPlayKey, setBorderPlayKey] = useState(0)
   const [autoLevel, setAutoLevel] = useState(false)
   const [reforming, setReforming] = useState(false)
   const [reformT, setReformT] = useState(0)
@@ -106,9 +106,13 @@ export function ScreenB() {
     }
   }, [cosmosKey])
 
+  /** 进入边境县 / 重播：沙盘自动跑马灯，依次高亮 25 县并在点位旁累计弹窗 */
   useEffect(() => {
-    if (!playing || mod !== 'border') return
-    setPopups([])
+    if (mod !== 'border') {
+      setPlaying(false)
+      return
+    }
+    setPlaying(true)
     setLitCounties([])
     setBorderIdx(-1)
     let i = 0
@@ -121,11 +125,10 @@ export function ScreenB() {
       }
       setBorderIdx(i)
       setLitCounties((prev) => [...prev, i])
-      setPopups((prev) => [...prev, { name: item.name, n: item.n }])
       i += 1
-    }, 520)
+    }, 700)
     return () => window.clearInterval(timer)
-  }, [playing, mod])
+  }, [mod, borderPlayKey])
 
   useEffect(() => {
     if (!autoLevel || mod !== 'network') return
@@ -183,12 +186,11 @@ export function ScreenB() {
         label: c.name.replace('/芒市相关', ''),
         value: c.n,
         active: borderCounties[borderIdx]?.name === c.name,
-        onClick: () => {
+        onClick: playing ? undefined : () => {
           const idx = borderCounties.findIndex((x) => x.name === c.name)
           if (idx >= 0) {
             setBorderIdx(idx)
             setLitCounties((prev) => (prev.includes(idx) ? prev : [...prev, idx]))
-            setPopups((prev) => (prev.some((p) => p.name === c.name) ? prev : [...prev, { name: c.name, n: c.n }]))
           }
         },
       })),
@@ -273,23 +275,23 @@ export function ScreenB() {
 
           {(mod === 'border' || mod === 'happy') && borderPins.map((p, i) => {
             const lit = litCounties.includes(i) || (mod === 'happy' && i < 14)
-            const hot = borderIdx === i
+            const hot = mod === 'border' && borderIdx === i
+            const showPop = mod === 'border' && lit
             return (
-              <button
+              <div
                 key={p.name}
-                type="button"
                 className={`county-pin${lit ? ' lit' : ''}${hot ? ' hot' : ''}`}
                 style={{ left: `${p.left}%`, top: `${p.top}%` }}
-                onClick={() => {
-                  if (mod !== 'border') return
-                  setBorderIdx(i)
-                  setLitCounties((prev) => (prev.includes(i) ? prev : [...prev, i]))
-                  setPopups((prev) => (prev.some((x) => x.name === p.name) ? prev : [...prev, { name: p.name, n: p.n }]))
-                }}
               >
-                <i />
-                {hot ? <span>{p.name.replace('/芒市相关', '')}</span> : null}
-              </button>
+                <i className="county-dot" />
+                {hot ? <em className="county-pulse" /> : null}
+                {showPop ? (
+                  <div className={`county-pop${hot ? ' is-new' : ''}`}>
+                    <b>{p.name.replace('/芒市相关', '')}</b>
+                    <strong className="num">{p.n} 个网点</strong>
+                  </div>
+                ) : null}
+              </div>
             )
           })}
 
@@ -513,12 +515,27 @@ export function ScreenB() {
           {mod === 'border' && (
             <>
               <div className="glass-card">
-                <p className="glass-kicker">跑马灯交互</p>
-                <h3>25 县依次点亮</h3>
-                <p className="viz-note">每到一县弹出网点数，弹窗累计不消失。</p>
-                <button type="button" className="viz-cta" disabled={playing} onClick={() => setPlaying(true)}>
-                  {playing ? `演示中 ${litCounties.length}/25` : '开始跑马灯'}
-                </button>
+                <p className="glass-kicker">沙盘跑马灯</p>
+                <h3>{playing ? '依次高亮边境县' : '25 县已点亮完毕'}</h3>
+                <p className="viz-note">
+                  地图上逐县高亮选中；每到一县在点位旁弹出该县网点数，弹窗累计不消失。
+                </p>
+                <div className="glass-kpi-row">
+                  <div><span>已高亮</span><strong className="num">{litCounties.length}<em>/25</em></strong></div>
+                  <div><span>当前县</span><strong className="num" style={{ fontSize: 18 }}>
+                    {borderCounties[borderIdx]?.name.replace('/芒市相关', '') || '—'}
+                  </strong></div>
+                </div>
+                {!playing && litCounties.length >= borderCounties.length ? (
+                  <button
+                    type="button"
+                    className="viz-cta ghost"
+                    style={{ marginTop: 10 }}
+                    onClick={() => setBorderPlayKey((k) => k + 1)}
+                  >
+                    重新播放跑马灯
+                  </button>
+                ) : null}
               </div>
               <div className="glass-card">
                 <h3>分县网点 · Top8</h3>
@@ -531,8 +548,8 @@ export function ScreenB() {
             <div className="glass-card">
               <p className="glass-kicker">沙盘说明</p>
               <h3>边境县亮起示意</h3>
-              <p className="viz-lead">需求写明与边境县类似的跑马灯效果。资料仅有幸福村网点 126、贷款余额 264.42 亿元；民族系列产品无分项表。</p>
-              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>查看边境县跑马灯</button>
+              <p className="viz-lead">需求写明与边境县类似的跑马灯（地图依次高亮）。资料仅有幸福村网点 126、贷款余额 264.42 亿元；民族系列产品无分项表。</p>
+              <button type="button" className="viz-cta ghost" onClick={() => switchMod('border')}>切到边境县看沙盘跑马灯</button>
             </div>
           )}
 
@@ -566,17 +583,6 @@ export function ScreenB() {
             </div>
           )}
         </aside>
-
-        {mod === 'border' && popups.length > 0 && (
-          <div className="bleed-popups">
-            {popups.map((p) => (
-              <div key={p.name} className="popup">
-                <div>{p.name.replace('/芒市相关', '')}</div>
-                <div className="num">{p.n} 个</div>
-              </div>
-            ))}
-          </div>
-        )}
 
         <div className="bleed-tabs">
           {modules.map((m) => (
