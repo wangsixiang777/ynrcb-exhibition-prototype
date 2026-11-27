@@ -1,28 +1,48 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Stage } from '../components/Stage'
 import { screenMeta, smilePeople, threePositions } from '../data/content'
 import glyphPoints from '../data/glyphPoints.json'
 
-type Mode = 'positions' | 'wall-float' | 'wall-text'
+type Mode = 'positions' | 'wall'
 
 const points = glyphPoints as [number, number][]
+const FLOAT_MS = 8000
+const FORM_MS = 7000
 
 export function ScreenC() {
   const [mode, setMode] = useState<Mode>('positions')
+  const [formed, setFormed] = useState(false)
   const [posId, setPosId] = useState(threePositions[0].id)
   const pos = threePositions.find((p) => p.id === posId)!
-  const formed = mode === 'wall-text'
   const base = import.meta.env.BASE_URL
 
+  useEffect(() => {
+    if (mode !== 'wall') return
+    setFormed(false)
+    let alive = true
+    let timer = 0
+    const tick = (toFormed: boolean) => {
+      timer = window.setTimeout(() => {
+        if (!alive) return
+        setFormed(toFormed)
+        tick(!toFormed)
+      }, toFormed ? FLOAT_MS : FORM_MS)
+    }
+    tick(true)
+    return () => {
+      alive = false
+      window.clearTimeout(timer)
+    }
+  }, [mode])
+
   return (
-    <Stage title={screenMeta.C.title} hint="预览 1920×1080 · 飘动与聚字沿用笑脸魔墙效果，拼 logo 暂缓">
+    <Stage title={screenMeta.C.title} hint="预览 1920×1080 · 笑脸先飘动，约 8 秒聚成字，约 7 秒后再散开">
       <div className="board board-c">
         <div className="c-head">
           <h2 className="title-cn">三大点位 · 笑脸墙</h2>
           <div className="seg">
             <button type="button" className={mode === 'positions' ? 'is-active' : undefined} onClick={() => setMode('positions')}>三大点位</button>
-            <button type="button" className={mode === 'wall-float' ? 'is-active' : undefined} onClick={() => setMode('wall-float')}>自由飘动</button>
-            <button type="button" className={mode === 'wall-text' ? 'is-active' : undefined} onClick={() => setMode('wall-text')}>照片聚字</button>
+            <button type="button" className={mode === 'wall' ? 'is-active' : undefined} onClick={() => setMode('wall')}>笑脸墙</button>
           </div>
         </div>
 
@@ -63,7 +83,7 @@ export function ScreenC() {
                 )
               })}
             </div>
-            <div className="wallfoot">16 个州市 · 66 位员工</div>
+            <div className="wallfoot">16 个州市 · 66 位员工 · {formed ? '照片聚字' : '自由飘动'}</div>
           </div>
         )}
       </div>
