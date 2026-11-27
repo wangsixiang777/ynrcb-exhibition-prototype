@@ -71,146 +71,154 @@ export function ScreenB() {
     mod === 'border' && borderCounties[borderIdx] ? borderCounties[borderIdx].name : '',
   ].filter(Boolean).join(' · ')
 
+  const base = import.meta.env.BASE_URL
+  const bg = mod === 'specialty' ? `${base}${branch.photo}` : './maps/yunnan-map-sandtable.jpg'
+
   return (
     <Stage tone="viz">
-      <div className="board board-b viz">
-        <div className="b-head">
-          <div>
-            <h2 className="title-cn">金融服务展示</h2>
-            <p>{subtitle}</p>
-          </div>
-          <span className="chip">{mod === 'specialty' ? '资料包实拍' : '示意图替代三维沙盘'}</span>
-        </div>
-
-        <div className="b-grid">
-          <div className="b-side">
-            {mod === 'network' && (
-              <>
-                <Stat label="营业网点" value={`${networkStats.outlets}`} unit="个" />
-                <Stat label="覆盖乡镇" value={`${networkStats.townships}`} unit="个" />
-                <Stat label="服务站 / 支付点" value={networkStats.serviceStations} unit={networkStats.payPoints} />
-                <div className="glass side-note">
-                  <h3>层级点亮</h3>
-                  {networkStats.levels.map((l, idx) => (
-                    <button key={l.name} type="button" className={idx <= level ? 'level-row on' : 'level-row'} onClick={() => setLevel(idx)}>
-                      <span>{l.name}</span><span className="num">{l.count}</span>
-                    </button>
-                  ))}
-                  <button type="button" className="btn-primary" style={{ width: '100%', marginTop: 8 }} onClick={() => setModal({ title: '农商行改制', body: '全省网点星光收束至昆明总行后弹出。改制介绍正文待提供。' })}>
-                    农商行改制
-                  </button>
-                </div>
-              </>
-            )}
-            {mod === 'specialty' && (
-              <div className="glass side-note">
-                <span className="chip">{branch.tag}</span>
-                <h3 style={{ marginTop: 8 }}>{branch.name}</h3>
-                <p>{branch.text}</p>
-                {branch.id === 'dulong' ? (
-                  <>
-                    <p>{povertyCase.title}：{povertyCase.paras[1]}</p>
-                    <img className="photo-fill" style={{ height: 140, marginTop: 8 }} src={`${import.meta.env.BASE_URL}${povertyPhoto}`} alt="独龙江减贫案例" />
-                  </>
-                ) : null}
-              </div>
-            )}
-            {mod === 'border' && (
-              <>
-                <Stat label="边境县" value={`${borderSide.counties}`} unit="个" />
-                <Stat label="边境网点约" value={`${borderSide.branches}`} unit="个" />
-                <div className="glass side-note">
-                  <p>{borderSide.settlement}</p>
-                  <p>{borderSide.usd}</p>
-                  <span className="chip warn">{borderSide.note}</span>
-                </div>
-              </>
-            )}
-            {mod === 'happy' && (
-              <>
-                <Stat label="幸福村网点" value={`${happyVillage.total}`} unit="个" />
-                <Stat label="贷款余额" value={happyVillage.loan} />
-                <div className="glass side-note">{happyVillage.note}</div>
-              </>
-            )}
-            {mod === 'revitalize' && (
-              <>
-                <div className="seg">
-                  <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级</button>
-                  <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级</button>
-                </div>
-                <Stat label={revType === 'national' ? '国家重点帮扶县' : '省级帮扶县'} value={`${revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}`} unit="个" />
-                <Stat label="网点数" value={`${revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}`} unit="个" />
-                <div className="glass side-note">{revType === 'national' ? revitalization.national.tip : revitalization.provincial.tip}</div>
-              </>
-            )}
-            {mod === 'overseas' && (
-              <div className="glass side-note">
-                {overseas.map((o) => (
-                  <button key={o.id} type="button" className="btn-ghost" style={{ width: '100%', marginBottom: 8, justifyContent: 'space-between' }} onClick={() => setModal({ title: o.title, body: o.body })}>
-                    {o.title}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="glass map-stage">
-            {mod === 'specialty' ? (
-              <img src={`${import.meta.env.BASE_URL}${branch.photo}`} alt={branch.name} />
-            ) : (
-              <img src="./maps/yunnan-map-sandtable.jpg" alt="云南沙盘示意图" />
-            )}
-            {mod === 'specialty' ? null : <div className="veil" />}
-            {mod !== 'specialty' && Array.from({ length: 14 + level * 4 }).map((_, i) => (
-              <span key={i} className="dot" style={{ left: `${16 + ((i * 37) % 68)}%`, top: `${22 + ((i * 29) % 54)}%`, width: 7, height: 7, opacity: i < 4 + level ? 1 : 0.35 }} />
+      <div className="bleed">
+        <img className="bleed-bg" src={bg} alt="" />
+        <div className="bleed-wash" />
+        {mod !== 'specialty' && (
+          <div className="bleed-dots">
+            {Array.from({ length: 14 + level * 4 }).map((_, i) => (
+              <span key={i} className="dot" style={{ left: `${18 + ((i * 37) % 64)}%`, top: `${24 + ((i * 29) % 52)}%`, opacity: i < 4 + level ? 1 : 0.35 }} />
             ))}
-            {mod === 'border' && (
-              <div className="popups">
-                {popups.map((p) => (
-                  <div key={p.name} className="popup"><div>{p.name}</div><div className="num">{p.n} 个</div></div>
-                ))}
-              </div>
-            )}
-            <div className="map-actions">
-              {mod === 'network' && <button type="button" className="btn-ghost" onClick={() => setLevel((v) => Math.min(v + 1, networkStats.levels.length - 1))}>下一层级</button>}
-              {mod === 'border' && <button type="button" className="btn-primary" disabled={playing} onClick={() => setPlaying(true)}>{playing ? '演示中' : '跑马灯演示'}</button>}
+          </div>
+        )}
+
+        <aside className="bleed-side bleed-left">
+          {mod === 'network' && (
+            <>
+              <Stat label="营业网点" value={`${networkStats.outlets}`} unit="个" />
+              <Stat label="自助银行" value={`${networkStats.selfBanks}`} unit="个" />
+              <Stat label="覆盖乡镇" value={`${networkStats.townships}`} unit="个" />
+              <Stat label="服务站" value={networkStats.serviceStations} />
+              <Stat label="支付点" value={networkStats.payPoints} />
+            </>
+          )}
+          {mod === 'specialty' && (
+            <div className="gold-card">
+              <span className="chip">{branch.tag}</span>
+              <h3>{branch.name}</h3>
+              <p>{branch.text}</p>
+              {branch.id === 'dulong' ? <p>{povertyCase.title}：{povertyCase.paras[1]}</p> : null}
             </div>
-          </div>
-
-          <div className="b-side">
-            {mod === 'specialty' ? (
-              <div className="glass side-note" style={{ display: 'grid', gap: 8 }}>
-                <h3>实拍网点</h3>
-                {specialtyBranches.map((b) => (
-                  <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => setBranchId(b.id)}>
-                    {b.name.replace('市农商行营业部', '').replace('信用社', '')}
-                  </button>
-                ))}
-                <p>主图为资料包网点照片。独龙江另附全球减贫案例图。</p>
+          )}
+          {mod === 'border' && (
+            <>
+              <Stat label="边境县" value={`${borderSide.counties}`} unit="个" />
+              <Stat label="边境网点" value={`${borderSide.branches}`} unit="个" />
+              <div className="gold-card">
+                <p>{borderSide.settlement}</p>
+                <p>{borderSide.usd}</p>
+                <p>{borderSide.mutual}</p>
+                <span className="chip warn">{borderSide.note}</span>
               </div>
-            ) : (
-              <div className="glass side-note">
-                <h3>本侧展示</h3>
-                {mod === 'network' && <p>基础金融全覆盖，由总行向外辐射。</p>}
-                {mod === 'border' && <p>口岸、边民互市与信贷投放补充位。</p>}
-                {mod === 'happy' && <p>民族系列产品数据卡，明细待补。</p>}
-                {mod === 'revitalize' && <p>国家 / 省级区县高亮与名单摘要。</p>}
-                {mod === 'overseas' && <p>中老、中越、缅甸方向示意。</p>}
+            </>
+          )}
+          {mod === 'happy' && (
+            <>
+              <Stat label="幸福村网点" value={`${happyVillage.total}`} unit="个" />
+              <Stat label="贷款余额" value={happyVillage.loan} />
+              <div className="gold-card"><p>{happyVillage.note}</p></div>
+            </>
+          )}
+          {mod === 'revitalize' && (
+            <>
+              <div className="seg">
+                <button type="button" className={revType === 'national' ? 'is-active' : undefined} onClick={() => setRevType('national')}>国家级</button>
+                <button type="button" className={revType === 'provincial' ? 'is-active' : undefined} onClick={() => setRevType('provincial')}>省级</button>
               </div>
-            )}
-          </div>
-        </div>
+              <Stat label={revType === 'national' ? '国家重点帮扶县' : '省级帮扶县'} value={`${revType === 'national' ? revitalization.national.counties : revitalization.provincial.counties}`} unit="个" />
+              <Stat label="网点" value={`${revType === 'national' ? revitalization.national.branches : revitalization.provincial.branches}`} unit="个" />
+              <div className="gold-card"><p>{revType === 'national' ? revitalization.national.tip : revitalization.provincial.tip}</p></div>
+            </>
+          )}
+          {mod === 'overseas' && overseas.map((o) => (
+            <button key={o.id} type="button" className="gold-card gold-btn" onClick={() => setModal({ title: o.title, body: o.body })}>
+              <h3>{o.title}</h3>
+              <p>{o.body}</p>
+            </button>
+          ))}
+        </aside>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div className="seg">
-            {modules.map((m) => (
-              <button key={m.id} type="button" className={mod === m.id ? 'is-active' : undefined} onClick={() => { setMod(m.id); setModal(null); setPlaying(false) }}>
-                {m.label}
+        <aside className="bleed-side bleed-right">
+          {mod === 'network' && (
+            <div className="gold-card">
+              <h3>层级点亮 · {networkStats.levels[level].name}</h3>
+              {networkStats.levels.map((l, idx) => (
+                <button key={l.name} type="button" className={idx <= level ? 'level-row on' : 'level-row'} onClick={() => setLevel(idx)}>
+                  <span>{l.name}</span><span className="num">{l.count}</span>
+                </button>
+              ))}
+              <button type="button" className="btn-primary" style={{ width: '100%', marginTop: 8 }} onClick={() => setModal({ title: '农商行改制', body: '全省网点星光收束至昆明总行后弹出。改制介绍正文待提供。' })}>
+                农商行改制
               </button>
+            </div>
+          )}
+          {mod === 'specialty' && (
+            <div className="gold-card">
+              <h3>五个特色网点</h3>
+              {specialtyBranches.map((b) => (
+                <button key={b.id} type="button" className={branchId === b.id ? 'btn-primary' : 'btn-ghost'} style={{ width: '100%', marginTop: 6, justifyContent: 'flex-start' }} onClick={() => setBranchId(b.id)}>
+                  {b.name}
+                </button>
+              ))}
+              {branch.id === 'dulong' ? (
+                <img className="photo-fill" style={{ height: 120, marginTop: 8 }} src={`${base}${povertyPhoto}`} alt="独龙江减贫案例" />
+              ) : null}
+            </div>
+          )}
+          {mod === 'border' && (
+            <div className="gold-card">
+              <h3>边境县网点</h3>
+              <div className="county-list">
+                {borderCounties.map((c) => (
+                  <div key={c.name} className={borderCounties[borderIdx]?.name === c.name ? 'on' : undefined}><span>{c.name}</span><b>{c.n}</b></div>
+                ))}
+              </div>
+              <button type="button" className="btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={playing} onClick={() => setPlaying(true)}>{playing ? '演示中' : '跑马灯'}</button>
+            </div>
+          )}
+          {mod === 'happy' && (
+            <div className="gold-card">
+              <h3>待补维度</h3>
+              <p>资料只有网点总数和贷款余额。民族系列产品明细没有单独表格。</p>
+            </div>
+          )}
+          {mod === 'revitalize' && (
+            <div className="gold-card">
+              <h3>{revType === 'national' ? '国家级' : '省级'}</h3>
+              <p>{revType === 'national' ? `${revitalization.national.counties} 个县、${revitalization.national.branches} 个网点` : `${revitalization.provincial.counties} 个县、${revitalization.provincial.branches} 个网点`}</p>
+              <p>{revType === 'national' ? revitalization.national.tip : revitalization.provincial.tip}</p>
+            </div>
+          )}
+          {mod === 'overseas' && (
+            <div className="gold-card">
+              <h3>已接入同业</h3>
+              <p>越南 6 家、老挝 1 家、缅甸 1 家银行接入平台。</p>
+              <p>API 直联为 2025 年 4 月末与老挝外贸大众银行上线。</p>
+            </div>
+          )}
+        </aside>
+
+        {mod === 'border' && popups.length > 0 && (
+          <div className="bleed-popups">
+            {popups.slice(-4).map((p) => (
+              <div key={p.name} className="popup"><div>{p.name}</div><div className="num">{p.n} 个</div></div>
             ))}
           </div>
+        )}
+
+        <div className="bleed-tabs">
+          {modules.map((m) => (
+            <button key={m.id} type="button" className={mod === m.id ? 'is-on' : undefined} onClick={() => { setMod(m.id); setModal(null); setPlaying(false) }}>
+              {m.label}
+            </button>
+          ))}
         </div>
+        <p className="bleed-caption">{subtitle}{mod === 'specialty' ? ' · 资料包实拍' : ' · 沙盘为示意图'}</p>
 
         {modal && (
           <div className="modal-mask" onClick={() => setModal(null)}>
