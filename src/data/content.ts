@@ -365,29 +365,24 @@ export const threePositions = [
   {
     id: 'unity',
     title: '民族团结进步示范区',
-    points: [
-      '整村授信 / 多民族整族授信',
-      '民族系列信贷产品（兴边富民贷、民族繁荣贷、民族团结贷等）',
-      '双语服务；2100网点、2604自助银行',
-    ],
-  },
-  {
-    id: 'ecology',
-    title: '生态文明建设排头兵',
-    points: [
-      '绿色金融指引与行动计划',
-      '碳汇质押、碳减排贷款、取水权质押等创新',
-      '绿色信贷风险分类与一票否决',
+    pins: [
+      { name: '独龙江乡', left: 38, top: 31 },
+      { name: '司莫拉佤族村', left: 40, top: 42.5 },
     ],
   },
   {
     id: 'radiate',
     title: '面向南亚东南亚辐射中心',
-    points: [
-      '42家法人行社外汇资质，覆盖27个口岸',
-      '边民互市全流程电子化',
-      '多场景沿边金融平台 + API直联',
+    pins: [
+      { name: '瑞丽', left: 37.5, top: 50 },
+      { name: '河口', left: 63.5, top: 66.5 },
+      { name: '磨憨', left: 53.5, top: 69 },
     ],
+  },
+  {
+    id: 'ecology',
+    title: '生态文明建设排头兵',
+    pins: [] as { name: string; left: number; top: number }[],
   },
 ]
 
