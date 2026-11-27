@@ -501,17 +501,10 @@ export function ScreenB() {
                 <p className="viz-miss" style={{ marginTop: 8 }}>{borderSide.missing}</p>
               </div>
               <div className="glass-card">
-                <h3>跨境结算</h3>
-                <MetricTiles
-                  items={[
-                    { label: '累计结算', value: '638亿+' },
-                    { label: '美元规模', value: '8.8亿$' },
-                    { label: '重点口岸', value: '3', tip: '磨憨勐满关累' },
-                    { label: '签约边民', value: '3192' },
-                    { label: '商家', value: '419' },
-                    { label: '结算单', value: '21.76万', tip: '17.17亿元' },
-                  ]}
-                />
+                <p className="glass-kicker">信贷数据</p>
+                <h3>边境信贷</h3>
+                <p className="viz-note">模拟占位，正式数据由客户填写。</p>
+                <MetricTiles items={borderSide.creditPlaceholders} />
               </div>
             </>
           )}
@@ -642,30 +635,19 @@ export function ScreenB() {
           {mod === 'border' && (
             <>
               <div className="glass-card">
-                <h3>分县网点 · Top8</h3>
-                <HBars items={borderBars.slice(0, 8)} />
-              </div>
-              <div className="glass-card">
-                <p className="glass-kicker">边民互市 · 资料全文</p>
+                <p className="glass-kicker">边民互市</p>
                 <h3>贸易新业态综合服务</h3>
-                <div className="info-sections">
-                  {borderSide.mutualSections.map((sec) => (
-                    <div key={sec.title} className="info-section">
-                      <b>{sec.title}</b>
-                      <ul>
-                        {sec.items.map((line) => (
-                          <li key={line}>{line}</li>
-                        ))}
-                      </ul>
-                    </div>
+                <p className="viz-lead">{borderSide.mutualLead}</p>
+                <div className="cap-row">
+                  {borderSide.mutualCaps.map((c) => (
+                    <span key={c} className="cap-pill">{c}</span>
                   ))}
                 </div>
+                <MetricTiles items={borderSide.mutualMetrics} />
               </div>
               <div className="glass-card">
-                <p className="glass-kicker">信贷数据</p>
-                <h3>边境信贷（示意）</h3>
-                <p className="viz-note">以下为占位模拟，正式数据请客户自行填写替换。</p>
-                <MetricTiles items={borderSide.creditPlaceholders} />
+                <h3>分县网点 · Top8</h3>
+                <HBars items={borderBars.slice(0, 8)} />
               </div>
             </>
           )}

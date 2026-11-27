@@ -812,28 +812,22 @@ img { max-width: 100%; display: block; }
 .sand-bleed .bleed-side.viz-panel .glass-kicker {
   color: #8a2208;
 }
-.info-sections {
-  display: grid;
-  gap: 10px;
-  margin-top: 4px;
+.cap-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
 }
-.info-section b {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 13px;
-  font-weight: 700;
+.cap-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 650;
   color: #8a2208;
-}
-.info-section ul {
-  margin: 0;
-  padding: 0 0 0 1.1em;
-  display: grid;
-  gap: 4px;
-}
-.info-section li {
-  font-size: 12px;
-  line-height: 1.5;
-  color: #4a240c;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(224, 140, 60, 0.4);
 }
 .glass-hero .glass-kpi-row {
   display: grid;
