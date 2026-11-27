@@ -1,55 +1,67 @@
 import { useMemo, useState } from 'react'
 import { Stage } from '../components/Stage'
-import { eScreens } from '../data/content'
+import { eNotices, eZones, type NoticeBlock } from '../data/escreen'
 
-const zones = ['全部', '公众教育区', '客户体验与互动区', '理财销售专区低柜屏'] as const
+function BlockView({ block, base }: { block: NoticeBlock; base: string }) {
+  if (block.kind === 'h') return <h3>{block.text}</h3>
+  if (block.kind === 'p') return <p>{block.text}</p>
+  if (block.kind === 'list') return <ul>{block.items.map((item) => <li key={item}>{item}</li>)}</ul>
+  if (block.kind === 'rows') {
+    return (
+      <div className="notice-rows">
+        {block.rows.map((row) => (
+          <div key={row.k}><b>{row.k}</b><span>{row.v}</span></div>
+        ))}
+      </div>
+    )
+  }
+  return <img className="notice-poster" src={`${base}${block.src}`} alt={block.alt} />
+}
 
 export function ScreenD() {
-  const [zone, setZone] = useState<(typeof zones)[number]>('全部')
-  const [id, setId] = useState<string>(eScreens[0].id)
-  const list = useMemo(() => eScreens.filter((e) => zone === '全部' || e.zone === zone), [zone])
-  const current = eScreens.find((e) => e.id === id) ?? list[0]
+  const [zone, setZone] = useState<(typeof eZones)[number]>(eZones[0])
+  const [id, setId] = useState(eNotices[0].id)
+  const list = useMemo(() => eNotices.filter((item) => item.zone === zone), [zone])
+  const current = list.find((item) => item.id === id) ?? list[0]
+  const base = import.meta.env.BASE_URL
+
+  const pickZone = (next: (typeof eZones)[number]) => {
+    setZone(next)
+    const first = eNotices.find((item) => item.zone === next)
+    if (first) setId(first.id)
+  }
 
   return (
-    <Stage>
-      <div className="board board-d">
-        <aside className="glass d-list">
-          <h2 className="title-cn">公示目录</h2>
-          <div className="seg" style={{ flexWrap: 'wrap' }}>
-            {zones.map((z) => (
-              <button key={z} type="button" className={zone === z ? 'is-active' : undefined} onClick={() => setZone(z)}>
-                {z === '理财销售专区低柜屏' ? '理财低柜' : z === '客户体验与互动区' ? '体验区' : z}
+    <Stage tone="viz">
+      <div className="notice-wall">
+        <aside className="notice-nav">
+          <p className="glass-kicker">一楼电子屏</p>
+          <h2>公示目录</h2>
+          <div className="notice-zones">
+            {eZones.map((item) => (
+              <button key={item} type="button" className={zone === item ? 'is-on' : undefined} onClick={() => pickZone(item)}>
+                {item}
               </button>
             ))}
           </div>
-          <div className="d-items">
-            {list.map((e) => (
-              <button key={e.id} type="button" className={current.id === e.id ? 'btn-primary' : 'btn-ghost'} onClick={() => setId(e.id)}>
-                <span>{e.id} · {e.title}{'blocked' in e && e.blocked ? ' · 缺素材' : ''}</span>
-                <small>{e.zone}</small>
+          <div className="notice-list">
+            {list.map((item) => (
+              <button key={item.id} type="button" className={current.id === item.id ? 'is-on' : undefined} onClick={() => setId(item.id)}>
+                <b>{item.title}</b>
+                <span>{item.dept}</span>
               </button>
             ))}
           </div>
         </aside>
-        <section className="glass d-detail">
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-            <div>
-              <span className="chip">{current.id}</span>
-              {'blocked' in current && current.blocked ? <span className="chip danger" style={{ marginLeft: 6 }}>阻塞</span> : null}
-              <h2 className="title-cn">{current.title}</h2>
-            </div>
-            <div className="d-meta">
-              <div>{current.dept}</div>
-              <div>{current.zone}</div>
-              <div>{current.basis}</div>
-            </div>
-          </div>
-          <div className="d-body">{current.body}</div>
-          <div className="d-foot">
-            <div className="glass"><b>素材</b>{current.asset}</div>
-            <div className="glass"><b>建议形态</b>教育区海报轮播；体验区目录加详情</div>
-          </div>
-        </section>
+        <article className="notice-sheet">
+          <header>
+            <p>{current.zone} · {current.basis}</p>
+            <h2>{current.title}</h2>
+          </header>
+          {current.blocks.map((block, index) => (
+            <BlockView key={`${current.id}-${index}`} block={block} base={base} />
+          ))}
+        </article>
       </div>
     </Stage>
   )
