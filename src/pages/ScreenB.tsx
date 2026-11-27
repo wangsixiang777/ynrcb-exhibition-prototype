@@ -428,7 +428,6 @@ export function ScreenB() {
               <div className="glass-card">
                 <p className="glass-kicker">二级按钮 · 层级点亮</p>
                 <h3>当前：{networkStats.levels[level].name}</h3>
-                <p className="viz-note">由昆明总行向外涟漪点亮；中心支行显示抛物线流光。</p>
                 <div className="level-btns">
                   {levelBars.map((item, idx) => (
                     <button
@@ -487,7 +486,6 @@ export function ScreenB() {
                   <div><span>边境县</span><strong className="num">{borderSide.counties}</strong></div>
                   <div><span>边境网点</span><strong className="num">约{borderSide.branches}</strong></div>
                 </div>
-                <p className="viz-miss" style={{ marginTop: 8 }}>{borderSide.missing}</p>
               </div>
               <div className="glass-card">
                 <h3>跨境结算</h3>
@@ -496,26 +494,18 @@ export function ScreenB() {
               <div className="glass-card">
                 <p className="glass-kicker">信贷数据</p>
                 <h3>边境信贷</h3>
-                <p className="viz-note">模拟占位，正式数据由客户填写。</p>
                 <MetricTiles items={borderSide.creditPlaceholders} />
               </div>
             </>
           )}
 
           {mod === 'happy' && (
-            <>
-              <div className="glass-card glass-hero">
-                <p className="glass-kicker">板块四 · 幸福村</p>
-                <div className="glass-kpi-row">
-                  <div><span>营业网点</span><strong className="num">{happyVillage.outlets}</strong></div>
-                  <div><span>贷款余额</span><strong className="num">264.42<em>亿</em></strong></div>
-                </div>
+            <div className="glass-card glass-hero">
+              <p className="glass-kicker">板块四 · 幸福村</p>
+              <div className="glass-kpi-row single">
+                <div><span>营业网点</span><strong className="num">{happyVillage.outlets}</strong></div>
               </div>
-              <div className="glass-card">
-                <h3>待补字段</h3>
-                <p className="viz-lead">{happyVillage.missing}</p>
-              </div>
-            </>
+            </div>
           )}
 
           {mod === 'revitalize' && (
@@ -605,7 +595,6 @@ export function ScreenB() {
                     { label: '基础金融', value: '全覆盖' },
                   ]}
                 />
-                <p className="viz-note" style={{ marginTop: 8 }}>沙盘点位为层级抽样示意；右侧数字为清单全量。</p>
               </div>
             </>
           )}
@@ -660,32 +649,12 @@ export function ScreenB() {
           )}
 
           {mod === 'happy' && (
-            <>
-              <div className="glass-card">
-                <p className="glass-kicker">沙盘跑马灯</p>
-                <h3>边境幸福村网点</h3>
-                <p className="viz-note">沿用边境县跑马灯：每秒一县；数量弹窗点亮后常驻不消失，层级高于点位。</p>
-                <div className="glass-kpi-row">
-                  <div><span>已点亮</span><strong className="num">{litCounties.length}<em>/25</em></strong></div>
-                  <div><span>当前县</span><strong className="num" style={{ fontSize: 18 }}>
-                    {borderCounties[borderIdx]?.name.replace('/芒市相关', '') || '—'}
-                  </strong></div>
-                </div>
+            <div className="glass-card glass-hero">
+              <p className="glass-kicker">贷款余额</p>
+              <div className="glass-kpi-row single">
+                <div><strong className="num">264.42<em>亿</em></strong></div>
               </div>
-              <div className="glass-card">
-                <p className="glass-kicker">民族系列产品</p>
-                <h3>信贷产品（示意）</h3>
-                <p className="viz-note">资料无分项表，以下为占位，待客户填写。</p>
-                <MetricTiles
-                  items={[
-                    { label: '产品一', value: '—', tip: '待客户填写' },
-                    { label: '产品二', value: '—', tip: '待客户填写' },
-                    { label: '产品三', value: '—', tip: '待客户填写' },
-                    { label: '产品四', value: '—', tip: '待客户填写' },
-                  ]}
-                />
-              </div>
-            </>
+            </div>
           )}
 
           {mod === 'revitalize' && (
